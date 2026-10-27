@@ -37,6 +37,7 @@ Algorithm/
     ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)
     ├── 06_Intervals/              # 专题 6：区间 (56)
     ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199)
+    ├── 16_Multidimensional_DP/    # 专题 16：多维动态规划 (120)
     └── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)
 ```
 
@@ -44,8 +45,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`10 / 150` 完成
-- **状态统计**：🟢 一次通过/攻克: 5 | 🟡 踩坑修正/待二刷: 5 | 🔴 待重做: 0
+- **总进度**：`11 / 150` 完成
+- **状态统计**：🟢 一次通过/攻克: 6 | 🟡 踩坑修正/待二刷: 5 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -80,6 +81,12 @@ Algorithm/
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | 199 | [二叉树的右视图](https://leetcode.cn/problems/binary-tree-right-side-view/) | 🟡 中等 | 🟢 一次通过 | 双缓冲/队列分层 BFS；每层末尾节点收集；空树特判与负索引防御 | [详尽复盘笔记](problems/10_Binary_Tree_BFS/0199_binary-tree-right-side-view/README.md) |
 | 102 | [二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/) | 🟡 中等 | ⚪ 未开始 | 标准单队列分层模板 | 待添加 |
+
+### 16. 多维动态规划 (Multidimensional DP)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 120 | [三角形最小路径和](https://leetcode.cn/problems/triangle/) | 🟡 中等 | 🟢 一次通过 | 自底向上收敛 DP；原地更新规避边界判断；0ms 双百秒杀 | [详尽复盘笔记](problems/16_Multidimensional_DP/0120_triangle/README.md) |
+| 64 | [最小路径和](https://leetcode.cn/problems/minimum-path-sum/) | 🟡 中等 | ⚪ 未开始 | 网格滚动 DP | 待添加 |
 
 ### 17. Kadane 算法 (Kadane's Algorithm)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
