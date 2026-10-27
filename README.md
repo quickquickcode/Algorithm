@@ -34,7 +34,7 @@ Algorithm/
 │   └── README.md                  # 力扣提交流程与 CLI / VS Code 插件使用指南
 └── problems/                      # 题目归档（按 Top Interview 150 专题分类）
     ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42)
-    ├── 04_Matrix/                 # 专题 4：矩阵 (48)
+    ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)
     ├── 06_Intervals/              # 专题 6：区间 (56)
     ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199)
     └── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)
@@ -44,8 +44,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`8 / 150` 完成
-- **状态统计**：🟢 一次通过/攻克: 6 | 🟡 踩坑修正: 2 | 🔴 待重做: 0
+- **总进度**：`10 / 150` 完成
+- **状态统计**：🟢 一次通过/攻克: 5 | 🟡 踩坑修正/待二刷: 5 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -65,9 +65,9 @@ Algorithm/
 ### 4. 矩阵 (Matrix)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
 | :---: | :--- | :---: | :---: | :--- | :---: |
-| 48 | [旋转图像](https://leetcode.cn/problems/rotate-image/) | 🟡 中等 | 🟢 一次通过 | 几何对称分解；主对角线转置 + 垂直水平翻转；严防 `l-1-j` 越界 | [详尽复盘笔记](problems/04_Matrix/0048_rotate-image/README.md) |
+| 48 | [旋转图像](https://leetcode.cn/problems/rotate-image/) | 🟡 中等 | 🟡 借鉴题解 / 待二刷 | 几何对称分解；主对角线转置 + 垂直水平翻转；待二刷独立推导并防范 `l-1-j` 越界 | [详尽复盘笔记](problems/04_Matrix/0048_rotate-image/README.md) |
 | 54 | [螺旋矩阵](https://leetcode.cn/problems/spiral-matrix/) | 🟡 中等 | ⚪ 未开始 | 四边界动态收缩模拟 | 待添加 |
-| 73 | [矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/) | 🟡 中等 | ⚪ 未开始 | 原地第一行第一列状态位标记 | 待添加 |
+| 73 | [矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/) | 🟡 中等 | 🟡 待二刷 (重写最优解) | 当前解 47ms (5.05%)；需二刷升级为首行首列原地标记 $O(1)$ 空间最优解 | [详尽复盘笔记](problems/04_Matrix/0073_set-matrix-zeroes/README.md) |
 
 ### 6. 区间 (Intervals)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |

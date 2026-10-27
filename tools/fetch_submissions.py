@@ -28,50 +28,54 @@ def parse_csrf(cookie_str: str) -> str:
     return ""
 
 
-def ensure_waf_cookies(cookie_str: str) -> str:
-    """若缺少 alicfw 防火墙 Cookie，则通过 Node.js 快速解算挑战"""
-    if "alicfw=" in cookie_str:
-        return cookie_str
+def solve_waf_challenge(html: str) -> str:
+    """通过 Node.js 沙箱解算阿里 WAF 挑战，生成 alicfw 相关 Cookie"""
+    import re
+    m0 = re.search(r'name="parm_0"\s+value=\s*(-?\d+)', html)
+    m1 = re.search(r'name="parm_1"\s+value=\s*(-?\d+)', html)
+    script_m = re.search(r'<script type="text/javascript">([\s\S]*?)</script>', html)
+    if not (m0 and m1 and script_m):
+        return ""
+    p0, p1, script = m0.group(1), m1.group(1), script_m.group(1)
+    runner = """
+    const fs = require('fs');
+    const vm = require('vm');
+    const input = JSON.parse(fs.readFileSync(0, 'utf-8'));
+    let cookies = [];
+    const document = {
+      getElementById: (id) => ({ value: id === "parm_0" ? input.p0 : input.p1 }),
+      documentElement: { clientWidth: 1920, clientHeight: 1080 },
+      location: { protocol: "https:", host: "leetcode.cn" },
+      set cookie(val) { cookies.push(val.split(";")[0]); },
+      get cookie() { return cookies.join("; "); }
+    };
+    const window = { location: { protocol: "https:", host: "leetcode.cn", reload: () => {} } };
+    const context = { document, window, console: { log: () => {} }, parseInt, escape, Date };
+    vm.createContext(context);
+    vm.runInContext(input.script + "\\ncheck();", context);
+    process.stdout.write(cookies.join("; "));
+    """
+    proc = subprocess.run(
+        ["node", "-e", runner],
+        input=json.dumps({"p0": p0, "p1": p1, "script": script}),
+        capture_output=True,
+        text=True
+    )
+    return proc.stdout.strip()
 
-    try:
-        # 先试探性请求
-        cmd = [
-            "curl", "-s", "https://leetcode.cn/api/submissions/merge-sorted-array/",
-            "-H", f"Cookie: {cookie_str}",
-            "-H", f"User-Agent: {USER_AGENT}"
-        ]
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-        if "onload=\"check()\"" in res.stdout:
-            # 触发了阿里 WAF 挑战，提取参数并通过 Node 计算
-            import re
-            m0 = re.search(r'name="parm_0"\s+value=\s*(-?\d+)', res.stdout)
-            m1 = re.search(r'name="parm_1"\s+value=\s*(-?\d+)', res.stdout)
-            script_m = re.search(r'<script type="text/javascript">([\s\S]*?)</script>', res.stdout)
-            if m0 and m1 and script_m:
-                p0, p1 = m0.group(1), m1.group(1)
-                script = script_m.group(1)
-                node_code = f"""
-                let cookies = [];
-                const document = {{
-                  getElementById: (id) => ({{ value: id === "parm_0" ? "{p0}" : "{p1}" }}),
-                  documentElement: {{ clientWidth: 1920, clientHeight: 1080 }},
-                  location: {{ protocol: "https:", host: "leetcode.cn" }},
-                  set cookie(val) {{ cookies.push(val); }},
-                  get cookie() {{ return cookies.join("; "); }}
-                }};
-                const window = {{ location: {{ protocol: "https:", host: "leetcode.cn", reload: () => {{}} }} }};
-                const context = {{ document, window, console: {{ log: () => {{}} }}, parseInt, escape }};
-                const vm = require("vm");
-                vm.createContext(context);
-                vm.runInContext({json.dumps(script)} + "\\ncheck();", context);
-                console.log(cookies.join("; "));
-                """
-                node_res = subprocess.run(["node", "-e", node_code], capture_output=True, text=True)
-                calc_cookies = node_res.stdout.strip()
-                if calc_cookies:
-                    cookie_str += "; " + calc_cookies
-    except Exception:
-        pass
+
+def ensure_waf_cookies(cookie_str: str) -> str:
+    """若缺少有效 alicfw 防火墙 Cookie，则通过 Node.js 快速解算挑战"""
+    cmd = [
+        "curl", "-s", "https://leetcode.cn/api/submissions/merge-sorted-array/",
+        "-H", f"Cookie: {cookie_str}",
+        "-H", f"User-Agent: {USER_AGENT}"
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+    if "onload=\"check()\"" in res.stdout:
+        calc_cookies = solve_waf_challenge(res.stdout)
+        if calc_cookies:
+            cookie_str += "; " + calc_cookies
     return cookie_str
 
 
@@ -103,17 +107,21 @@ def get_submission_detail(sub_id: str, cookie: str):
         timestamp
         statusDisplay
         lang
-        runtime
-        memory
+        runtimeDisplay: runtime
+        memoryDisplay: memory
+        runtimePercentile
+        memoryPercentile
+        passedTestCaseCnt
+        totalTestCaseCnt
       }
     }
     """
-    req_body = json.dumps({"query": query, "variables": {"submissionId": str(sub_id)}})
+    req_body = json.dumps({"operationName": "submissionDetails", "query": query, "variables": {"submissionId": str(sub_id)}})
     cmd = [
         "curl", "-s", "https://leetcode.cn/graphql/",
         "-H", f"Cookie: {cookie}",
         "-H", f"User-Agent: {USER_AGENT}",
-        "-H", f"Referer: https://leetcode.cn/problems/",
+        "-H", f"Referer: https://leetcode.cn/submissions/detail/{sub_id}/",
         "-H", "Content-Type: application/json",
         "-H", f"x-csrftoken: {csrf}",
         "--data", req_body
@@ -125,8 +133,25 @@ def get_submission_detail(sub_id: str, cookie: str):
         return None
 
 
+def get_runtime_distribution(sub_id: str, cookie: str):
+    """获取执行用时分布直方图数据"""
+    cmd = [
+        "curl", "-s", f"https://leetcode.cn/submissions/api/runtime_distribution/{sub_id}/",
+        "-H", f"Cookie: {cookie}",
+        "-H", f"User-Agent: {USER_AGENT}",
+        "-H", f"Referer: https://leetcode.cn/submissions/detail/{sub_id}/"
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    try:
+        data = json.loads(res.stdout)
+        formatted = json.loads(data.get("runtime_distribution_formatted", "{}"))
+        return formatted.get("distribution", [])
+    except Exception:
+        return []
+
+
 def main():
-    parser = argparse.ArgumentParser(description="LeetCode CN 历史提交及错误代码提取工具")
+    parser = argparse.ArgumentParser(description="LeetCode CN 历史提交及代码/用时击败率提取工具")
     parser.add_argument("--slug", required=True, help="题目英文标识，例如 merge-sorted-array 或 remove-element")
     parser.add_argument("--cookie", default=os.getenv("LEETCODE_COOKIE", ""), help="力扣 Cookie 字符串 (或设置 LEETCODE_COOKIE 环境变量)")
     parser.add_argument("--limit", type=int, default=20, help="最多获取的提交数量")
@@ -156,10 +181,22 @@ def main():
         time_str = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S") if timestamp else time_ago
         status_emoji = "✅" if status == "Accepted" else "❌"
 
-        print(f"[{idx}] 提交 ID: {sub_id} | 状态: {status_emoji} {status:<15} | 时间: {time_str}")
-
         detail = get_submission_detail(sub_id, cookie)
         code = detail.get("code") if detail else "(无法拉取代码)"
+        runtime_display = detail.get("runtimeDisplay") if detail and detail.get("runtimeDisplay") else sub.get("runtime", "N/A")
+        memory_display = detail.get("memoryDisplay") if detail and detail.get("memoryDisplay") else sub.get("memory", "N/A")
+        runtime_pct = detail.get("runtimePercentile") if detail else None
+        memory_pct = detail.get("memoryPercentile") if detail else None
+
+        perf_summary = f"运行时间: {runtime_display}"
+        if runtime_pct is not None:
+            perf_summary += f" (击败 {runtime_pct:.2f}%)"
+        perf_summary += f" | 内存: {memory_display}"
+        if memory_pct is not None:
+            perf_summary += f" (击败 {memory_pct:.2f}%)"
+
+        print(f"[{idx}] 提交 ID: {sub_id} | 状态: {status_emoji} {status:<15} | 时间: {time_str}")
+        print(f"    ├─ ⚡ 性能指标: {perf_summary}")
 
         if args.outdir:
             os.makedirs(args.outdir, exist_ok=True)
@@ -170,7 +207,7 @@ def main():
                 f.write(f"// 提交编号: {sub_id}\n")
                 f.write(f"// 提交时间: {time_str}\n")
                 f.write(f"// 判题结果: {status}\n")
-                f.write(f"// 运行时间: {sub.get('runtime', 'N/A')} | 内存: {sub.get('memory', 'N/A')}\n\n")
+                f.write(f"// {perf_summary}\n\n")
                 f.write(code)
             print(f"    └─ 📁 已保存到: {fpath}")
         else:
