@@ -42,8 +42,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`4 / 150` 完成
-- **状态统计**：🟢 一次通过: 3 | 🟡 踩坑修正: 2 | 🔴 待重做: 0
+- **总进度**：`5 / 150` 完成
+- **状态统计**：🟢 一次通过/攻克: 3 | 🟡 踩坑修正: 3 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -58,6 +58,12 @@ Algorithm/
 | 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心收集正收益 | 待添加 |
 | 55 | [跳跃游戏](https://leetcode.cn/problems/jump-game/) | 🟡 中等 | ⚪ 未开始 | 贪心维护最远边界 | 待添加 |
 | 45 | [跳跃游戏 II](https://leetcode.cn/problems/jump-game-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心边界跳跃 | 待添加 |
+
+### 6. 区间 (Intervals)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 56 | [合并区间](https://leetcode.cn/problems/merge-intervals/) | 🟡 中等 | 🟡 踩坑修正 | 排序降维；流式传送带收集；破除原地修改的沉锚效应 | [详尽复盘笔记](problems/06_Intervals/0056_merge-intervals/README.md) |
+| 57 | [插入区间](https://leetcode.cn/problems/insert-interval/) | 🟡 中等 | ⚪ 未开始 | 模拟分段合并 | 待添加 |
 
 ### 17. Kadane 算法 (Kadane's Algorithm)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
