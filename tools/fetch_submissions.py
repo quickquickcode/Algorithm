@@ -160,7 +160,24 @@ def main():
     args = parser.parse_args()
     cookie = args.cookie.strip()
     if not cookie:
-        print("[!] 错误：未提供力扣 Cookie！")
+        # 自动尝试从本地 cookie.txt 文件读取
+        candidates = [
+            "cookie.txt",
+            os.path.join(os.path.dirname(__file__), "..", "cookie.txt"),
+            os.path.expanduser("~/.leetcode_cookie")
+        ]
+        for cpath in candidates:
+            if os.path.exists(cpath):
+                try:
+                    with open(cpath, "r", encoding="utf-8") as f:
+                        cookie = f.read().strip()
+                    if cookie:
+                        break
+                except Exception:
+                    pass
+
+    if not cookie:
+        print("[!] 错误：未提供力扣 Cookie！请通过 --cookie、LEETCODE_COOKIE 环境变量或 cookie.txt 提供。")
         sys.exit(1)
 
     cookie = ensure_waf_cookies(cookie)
