@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Build / Binaries
+*.o
+*.out
+*.exe
+build/
+bin/
+
+# Temporary / Secrets
+.env
+cookie.txt
+*.log
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
