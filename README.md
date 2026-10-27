@@ -42,15 +42,15 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`2 / 150` 完成
-- **状态统计**：🟢 通过: 0 | 🟡 踩坑修正: 2 | 🔴 待重做: 0
+- **总进度**：`3 / 150` 完成
+- **状态统计**：🟢 一次通过: 2 | 🟡 踩坑修正: 1 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | 88 | [合并两个有序数组](https://leetcode.cn/problems/merge-sorted-array/) | 🟢 简单 | 🟡 踩坑修正 | 逆向双指针；后置空位利用；避免循环内 insert | [详尽复盘笔记](problems/01_Array_String/0088_merge-sorted-array/README.md) |
-| 27 | [移除元素](https://leetcode.cn/problems/remove-element/) | 🟢 简单 | 🟡 踩坑修正 | 快慢双指针覆盖；内层 while 边界防越界；覆盖取代交换 | [详尽复盘笔记](problems/01_Array_String/0027_remove-element/README.md) |
-| 26 | [删除有序数组中的重复项](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/) | 🟢 简单 | ⚪ 未开始 | 快慢指针去重 | 待添加 |
+| 27 | [移除元素](https://leetcode.cn/problems/remove-element/) | 🟢 简单 | 🟢 一次通过 | 快慢双指针覆盖；内层 while 边界防越界；覆盖取代交换 | [详尽复盘笔记](problems/01_Array_String/0027_remove-element/README.md) |
+| 26 | [删除有序数组中的重复项](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/) | 🟢 简单 | 🟢 一次通过 | 快慢指针有序去重；值与下标区分；`slow+1` 长度偏移 | [详尽复盘笔记](problems/01_Array_String/0026_remove-duplicates/README.md) |
 | 80 | [删除有序数组中的重复项 II](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/) | 🟡 中等 | ⚪ 未开始 | 快慢指针保留 k 个 | 待添加 |
 | 169 | [多数元素](https://leetcode.cn/problems/majority-element/) | 🟢 简单 | ⚪ 未开始 | Boyer-Moore 投票算法 | 待添加 |
 | 189 | [轮转数组](https://leetcode.cn/problems/rotate-array/) | 🟡 中等 | ⚪ 未开始 | 三次翻转法 | 待添加 |
