@@ -33,17 +33,19 @@ Algorithm/
 │   ├── fetch_submissions.py       # 力扣 GraphQL 提交记录与错误代码抓取 CLI
 │   └── README.md                  # 力扣提交流程与 CLI / VS Code 插件使用指南
 └── problems/                      # 题目归档（按 Top Interview 150 专题分类）
-    └── 01_Array_String/           # 专题 1：数组 / 字符串
-        ├── 0088_merge-sorted-array/
-        └── 0027_remove-element/
+    ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42)
+    ├── 04_Matrix/                 # 专题 4：矩阵 (48)
+    ├── 06_Intervals/              # 专题 6：区间 (56)
+    ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199)
+    └── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)
 ```
 
 ---
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`6 / 150` 完成
-- **状态统计**：🟢 一次通过/攻克: 4 | 🟡 踩坑修正: 2 | 🔴 待重做: 0
+- **总进度**：`8 / 150` 完成
+- **状态统计**：🟢 一次通过/攻克: 6 | 🟡 踩坑修正: 2 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -52,12 +54,20 @@ Algorithm/
 | 27 | [移除元素](https://leetcode.cn/problems/remove-element/) | 🟢 简单 | 🟢 一次通过 | 快慢双指针覆盖；内层 while 边界防越界；覆盖取代交换 | [详尽复盘笔记](problems/01_Array_String/0027_remove-element/README.md) |
 | 26 | [删除有序数组中的重复项](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/) | 🟢 简单 | 🟢 一次通过 | 快慢指针有序去重；值与下标区分；`slow+1` 长度偏移 | [详尽复盘笔记](problems/01_Array_String/0026_remove-duplicates/README.md) |
 | 80 | [删除有序数组中的重复项 II](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/) | 🟡 中等 | 🟡 踩坑修正 | 最多保留 k 个通用模板；摒弃 erase；区间越步比较 | [详尽复盘笔记](problems/01_Array_String/0080_remove-duplicates-ii/README.md) |
+| 42 | [接雨水](https://leetcode.cn/problems/trapping-rain-water/) | 🔴 困难 | 🟢 一次通过 | 最高峰拆分法；世界屋脊解耦双向短板约束；$O(1)$ 空间 0ms 秒杀 | [详尽复盘笔记](problems/01_Array_String/0042_trapping-rain-water/README.md) |
 | 169 | [多数元素](https://leetcode.cn/problems/majority-element/) | 🟢 简单 | ⚪ 未开始 | Boyer-Moore 投票算法 | 待添加 |
 | 189 | [轮转数组](https://leetcode.cn/problems/rotate-array/) | 🟡 中等 | ⚪ 未开始 | 三次翻转法 | 待添加 |
 | 121 | [买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) | 🟢 简单 | ⚪ 未开始 | 前缀最小值维护 | 待添加 |
 | 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心收集正收益 | 待添加 |
 | 55 | [跳跃游戏](https://leetcode.cn/problems/jump-game/) | 🟡 中等 | ⚪ 未开始 | 贪心维护最远边界 | 待添加 |
 | 45 | [跳跃游戏 II](https://leetcode.cn/problems/jump-game-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心边界跳跃 | 待添加 |
+
+### 4. 矩阵 (Matrix)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 48 | [旋转图像](https://leetcode.cn/problems/rotate-image/) | 🟡 中等 | 🟢 一次通过 | 几何对称分解；主对角线转置 + 垂直水平翻转；严防 `l-1-j` 越界 | [详尽复盘笔记](problems/04_Matrix/0048_rotate-image/README.md) |
+| 54 | [螺旋矩阵](https://leetcode.cn/problems/spiral-matrix/) | 🟡 中等 | ⚪ 未开始 | 四边界动态收缩模拟 | 待添加 |
+| 73 | [矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/) | 🟡 中等 | ⚪ 未开始 | 原地第一行第一列状态位标记 | 待添加 |
 
 ### 6. 区间 (Intervals)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
