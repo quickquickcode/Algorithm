@@ -42,8 +42,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`5 / 150` 完成
-- **状态统计**：🟢 一次通过/攻克: 3 | 🟡 踩坑修正: 3 | 🔴 待重做: 0
+- **总进度**：`6 / 150` 完成
+- **状态统计**：🟢 一次通过/攻克: 4 | 🟡 踩坑修正: 2 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -64,6 +64,12 @@ Algorithm/
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | 56 | [合并区间](https://leetcode.cn/problems/merge-intervals/) | 🟡 中等 | 🟡 待二刷 (待补排序解) | 排序降维；流式传送带收集；破除原地修改的沉锚效应 | [详尽复盘笔记](problems/06_Intervals/0056_merge-intervals/README.md) |
 | 57 | [插入区间](https://leetcode.cn/problems/insert-interval/) | 🟡 中等 | ⚪ 未开始 | 模拟分段合并 | 待添加 |
+
+### 10. 二叉树层次遍历 (Binary Tree BFS)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 199 | [二叉树的右视图](https://leetcode.cn/problems/binary-tree-right-side-view/) | 🟡 中等 | 🟢 一次通过 | 双缓冲/队列分层 BFS；每层末尾节点收集；空树特判与负索引防御 | [详尽复盘笔记](problems/10_Binary_Tree_BFS/0199_binary-tree-right-side-view/README.md) |
+| 102 | [二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/) | 🟡 中等 | ⚪ 未开始 | 标准单队列分层模板 | 待添加 |
 
 ### 17. Kadane 算法 (Kadane's Algorithm)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
