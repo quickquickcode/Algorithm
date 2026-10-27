@@ -42,8 +42,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`3 / 150` 完成
-- **状态统计**：🟢 一次通过: 2 | 🟡 踩坑修正: 1 | 🔴 待重做: 0
+- **总进度**：`4 / 150` 完成
+- **状态统计**：🟢 一次通过: 3 | 🟡 踩坑修正: 2 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -51,13 +51,19 @@ Algorithm/
 | 88 | [合并两个有序数组](https://leetcode.cn/problems/merge-sorted-array/) | 🟢 简单 | 🟡 踩坑修正 | 逆向双指针；后置空位利用；避免循环内 insert | [详尽复盘笔记](problems/01_Array_String/0088_merge-sorted-array/README.md) |
 | 27 | [移除元素](https://leetcode.cn/problems/remove-element/) | 🟢 简单 | 🟢 一次通过 | 快慢双指针覆盖；内层 while 边界防越界；覆盖取代交换 | [详尽复盘笔记](problems/01_Array_String/0027_remove-element/README.md) |
 | 26 | [删除有序数组中的重复项](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/) | 🟢 简单 | 🟢 一次通过 | 快慢指针有序去重；值与下标区分；`slow+1` 长度偏移 | [详尽复盘笔记](problems/01_Array_String/0026_remove-duplicates/README.md) |
-| 80 | [删除有序数组中的重复项 II](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/) | 🟡 中等 | ⚪ 未开始 | 快慢指针保留 k 个 | 待添加 |
+| 80 | [删除有序数组中的重复项 II](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/) | 🟡 中等 | 🟡 踩坑修正 | 最多保留 k 个通用模板；摒弃 erase；区间越步比较 | [详尽复盘笔记](problems/01_Array_String/0080_remove-duplicates-ii/README.md) |
 | 169 | [多数元素](https://leetcode.cn/problems/majority-element/) | 🟢 简单 | ⚪ 未开始 | Boyer-Moore 投票算法 | 待添加 |
 | 189 | [轮转数组](https://leetcode.cn/problems/rotate-array/) | 🟡 中等 | ⚪ 未开始 | 三次翻转法 | 待添加 |
 | 121 | [买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) | 🟢 简单 | ⚪ 未开始 | 前缀最小值维护 | 待添加 |
 | 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心收集正收益 | 待添加 |
 | 55 | [跳跃游戏](https://leetcode.cn/problems/jump-game/) | 🟡 中等 | ⚪ 未开始 | 贪心维护最远边界 | 待添加 |
 | 45 | [跳跃游戏 II](https://leetcode.cn/problems/jump-game-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心边界跳跃 | 待添加 |
+
+### 17. Kadane 算法 (Kadane's Algorithm)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 53 | [最大子数组和](https://leetcode.cn/problems/maximum-subarray/) | 🟡 中等 | 🟢 一次通过 | 负前缀和断舍离；循环自增防死循环；全负数边界初始值 | [详尽复盘笔记](problems/17_Kadane_Algorithm/0053_maximum-subarray/README.md) |
+| 918 | [环形子数组的最大和](https://leetcode.cn/problems/maximum-sum-circular-subarray/) | 🟡 中等 | ⚪ 未开始 | 最大子段和与最小子段和结合 | 待添加 |
 | ... | *(后续 140 题已按专题预备好目录架构)* | | | | |
 
 ---
