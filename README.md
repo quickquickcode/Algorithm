@@ -33,9 +33,10 @@ Algorithm/
 │   ├── fetch_submissions.py       # 力扣 GraphQL 提交记录与错误代码抓取 CLI
 │   └── README.md                  # 力扣提交流程与 CLI / VS Code 插件使用指南
 └── problems/                      # 题目归档（按 Top Interview 150 专题分类）
-    ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42)
+    ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42, 122)
     ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)
     ├── 06_Intervals/              # 专题 6：区间 (56)
+│   ├── 08_Linked_List/           # 专题 8：链表 (61)
     ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199, 637)
     ├── 11_Binary_Search_Tree/     # 专题 11：二叉搜索树 (530)
     ├── 16_Multidimensional_DP/    # 专题 16：多维动态规划 (120)
@@ -46,8 +47,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`13 / 150` 已纳入档案
-- **状态统计**：🟢 一次通过/攻克: 7 | 🟡 踩坑修正/待二刷/调试: 6 | 🔴 待重做: 0
+- **总进度**：`15 / 150` 已纳入档案
+- **状态统计**：🟢 一次通过/攻克: 7 | 🟡 踩坑修正/待二刷/调试: 6 | 🔴 待重做: 2
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -60,7 +61,7 @@ Algorithm/
 | 169 | [多数元素](https://leetcode.cn/problems/majority-element/) | 🟢 简单 | ⚪ 未开始 | Boyer-Moore 投票算法 | 待添加 |
 | 189 | [轮转数组](https://leetcode.cn/problems/rotate-array/) | 🟡 中等 | ⚪ 未开始 | 三次翻转法 | 待添加 |
 | 121 | [买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) | 🟢 简单 | ⚪ 未开始 | 前缀最小值维护 | 待添加 |
-| 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心收集正收益 | 待添加 |
+| 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | 🟢 一次通过 | 贪心收集正收益；波谷波峰转化；相邻差值累加；0ms 双百 | [详尽复盘笔记](problems/01_Array_String/0122_best-time-to-buy-and-sell-stock-ii/README.md) |
 | 55 | [跳跃游戏](https://leetcode.cn/problems/jump-game/) | 🟡 中等 | ⚪ 未开始 | 贪心维护最远边界 | 待添加 |
 | 45 | [跳跃游戏 II](https://leetcode.cn/problems/jump-game-ii/) | 🟡 中等 | ⚪ 未开始 | 贪心边界跳跃 | 待添加 |
 
@@ -76,6 +77,13 @@ Algorithm/
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | 56 | [合并区间](https://leetcode.cn/problems/merge-intervals/) | 🟡 中等 | 🟡 待二刷 (待补排序解) | 排序降维；流式传送带收集；破除原地修改的沉锚效应 | [详尽复盘笔记](problems/06_Intervals/0056_merge-intervals/README.md) |
 | 57 | [插入区间](https://leetcode.cn/problems/insert-interval/) | 🟡 中等 | ⚪ 未开始 | 模拟分段合并 | 待添加 |
+
+### 8. 链表 (Linked List)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 61 | [旋转链表](https://leetcode.cn/problems/rotate-list/) | 🟡 中等 | 🟡 踩坑修正 | 闭环成环与向右旋转取模折算；空链表/单节点特判；0ms 双百 | [详尽复盘笔记](problems/08_Linked_List/0061_rotate-list/README.md) |
+| 141 | [环形链表](https://leetcode.cn/problems/linked-list-cycle/) | 🟢 简单 | ⚪ 未开始 | 快慢指针判断环 | 待添加 |
+| 21 | [合并两个有序链表](https://leetcode.cn/problems/merge-two-sorted-lists/) | 🟢 简单 | ⚪ 未开始 | 虚拟头节点双指针合并 | 待添加 |
 
 ### 10. 二叉树层次遍历 (Binary Tree BFS)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |

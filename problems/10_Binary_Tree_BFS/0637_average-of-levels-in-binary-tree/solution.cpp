@@ -1,8 +1,3 @@
-// 提交编号: 757381796
-// 提交时间: 2026-10-28 12:02:02
-// 判题结果: Accepted
-// 运行时间: 0 ms (击败 100.00%) | 内存: 23.6 MB (击败 11.12%)
-
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
