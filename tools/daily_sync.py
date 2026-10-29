@@ -128,8 +128,8 @@ def get_question_data(slug: str, cookie: str):
         return {}
 
 
-def find_existing_problem_dir(repo_root: str, slug: str):
-    """查找本地是否已有该题目录"""
+def find_existing_problem_dir(repo_root: str, slug: str, fid: str = ""):
+    """查找本地是否已有该题目录（支持 slug 匹配与 4 位题号匹配）"""
     problems_dir = os.path.join(repo_root, "problems")
     if not os.path.exists(problems_dir):
         return None
@@ -139,18 +139,28 @@ def find_existing_problem_dir(repo_root: str, slug: str):
             continue
         for p in os.listdir(topic_path):
             p_path = os.path.join(topic_path, p)
-            if os.path.isdir(p_path) and (p.endswith(f"_{slug}") or p == slug):
+            if not os.path.isdir(p_path):
+                continue
+            if p.endswith(f"_{slug}") or p == slug:
                 return p_path
+            if fid:
+                try:
+                    prefix_num = int(p.split("_")[0])
+                    if prefix_num == int(fid):
+                        return p_path
+                except Exception:
+                    pass
     return None
 
 
 def resolve_problem_dir(repo_root: str, slug: str, q_data: dict):
     """定位或创建题目目录"""
-    existing = find_existing_problem_dir(repo_root, slug)
+    fid_raw = q_data.get("questionFrontendId", "")
+    existing = find_existing_problem_dir(repo_root, slug, fid_raw)
     if existing:
         return existing
 
-    fid = q_data.get("questionFrontendId", "0000").zfill(4)
+    fid = fid_raw.zfill(4) if fid_raw else "0000"
     # 查找专题
     topic_folder = KNOWN_QUESTION_TOPIC.get(slug)
     if not topic_folder:
@@ -456,9 +466,11 @@ def update_dashboard(repo_root: str):
             # 读取该题状态
             with open(os.path.join(root, "README.md"), "r", encoding="utf-8") as rf:
                 r_text = rf.read()
-                if "🟢 一次通过" in r_text or "🟢 **一次" in r_text:
+                m = re.search(r"(?:掌握状态|当前状态).*?[：:]\s*(.*?)$", r_text, re.M)
+                st_line = m.group(1) if m else r_text
+                if "🟢" in st_line:
                     passed_count += 1
-                elif "🔴" in r_text:
+                elif "🔴" in st_line:
                     red_count += 1
                 else:
                     warning_count += 1
@@ -484,8 +496,8 @@ def update_dashboard(repo_root: str):
 
     # 检查并更新 目录树导航
     if "08_Linked_List" not in content:
-        tree_needle = "├── 06_Intervals/              # 专题 6：区间 (56)\n"
-        tree_insert = "├── 06_Intervals/              # 专题 6：区间 (56)\n│   ├── 08_Linked_List/           # 专题 8：链表 (61)\n"
+        tree_needle = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n"
+        tree_insert = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n    ├── 08_Linked_List/            # 专题 8：链表 (61)\n"
         if tree_needle in content:
             content = content.replace(tree_needle, tree_insert)
     if "42, 122" not in content and "80, 42)" in content:

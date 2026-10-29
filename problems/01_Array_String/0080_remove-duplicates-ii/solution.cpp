@@ -4,7 +4,7 @@ public:
         if (nums.size()<2){
             return nums.size();
         }
-        int slow = 0, fast = 2;
+        int slow = 0, mid = slow + 2, fast = 2;
         while (fast < nums.size()){
             if (nums[slow] == nums[fast]){
                 fast++;
