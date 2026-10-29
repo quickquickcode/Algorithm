@@ -36,7 +36,8 @@ Algorithm/
     ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42)
     ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)
     ├── 06_Intervals/              # 专题 6：区间 (56)
-    ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199)
+    ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199, 637)
+    ├── 11_Binary_Search_Tree/     # 专题 11：二叉搜索树 (530)
     ├── 16_Multidimensional_DP/    # 专题 16：多维动态规划 (120)
     └── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)
 ```
@@ -45,8 +46,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`11 / 150` 完成
-- **状态统计**：🟢 一次通过/攻克: 6 | 🟡 踩坑修正/待二刷: 5 | 🔴 待重做: 0
+- **总进度**：`13 / 150` 已纳入档案
+- **状态统计**：🟢 一次通过/攻克: 7 | 🟡 踩坑修正/待二刷/调试: 6 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -80,7 +81,15 @@ Algorithm/
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | 199 | [二叉树的右视图](https://leetcode.cn/problems/binary-tree-right-side-view/) | 🟡 中等 | 🟢 一次通过 | 双缓冲/队列分层 BFS；每层末尾节点收集；空树特判与负索引防御 | [详尽复盘笔记](problems/10_Binary_Tree_BFS/0199_binary-tree-right-side-view/README.md) |
+| 637 | [二叉树的层平均值](https://leetcode.cn/problems/average-of-levels-in-binary-tree/) | 🟢 简单 | 🟢 一次通过 | 标准单队列层序模板；double累加防大数求和溢出；0ms 双百 | [详尽复盘笔记](problems/10_Binary_Tree_BFS/0637_average-of-levels-in-binary-tree/README.md) |
 | 102 | [二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/) | 🟡 中等 | ⚪ 未开始 | 标准单队列分层模板 | 待添加 |
+
+### 11. 二叉搜索树 (Binary Search Tree)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 530 | [二叉搜索树的最小绝对差](https://leetcode.cn/problems/minimum-absolute-difference-in-bst/) | 🟢 简单 | 🟡 踩坑调试中 | 中序遍历升序本质；双指针 prev 邻近比对；避开 10^6 异或陷阱与跨层漏检 | [详尽复盘笔记](problems/11_Binary_Search_Tree/0530_minimum-absolute-difference-in-bst/README.md) |
+| 230 | [二叉搜索树中第 K 小的元素](https://leetcode.cn/problems/kth-smallest-element-in-a-bst/) | 🟡 中等 | ⚪ 未开始 | 中序遍历提前剪枝 | 待添加 |
+| 98 | [验证二叉搜索树](https://leetcode.cn/problems/validate-binary-search-tree/) | 🟡 中等 | ⚪ 未开始 | 中序严格单调递增验证 | 待添加 |
 
 ### 16. 多维动态规划 (Multidimensional DP)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |

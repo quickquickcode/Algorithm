@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🐛 调试 530: [100000, 0] (C/C++ LLDB)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/debug_530",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "Build 530 Debug"
+    },
+    {
+      "name": "🐛 调试 530: [100000, 0] (CodeLLDB 插件专用)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/debug_530",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build 530 Debug"
+    },
+    {
+      "name": "▶️ 调试当前活动文件 (C/C++ LLDB)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "Build Active C++ File"
+    },
+    {
+      "name": "▶️ 调试当前活动文件 (CodeLLDB)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build Active C++ File"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/hqb/project/2026/Algorithm/problems/11_Binary_Search_Tree/0530_minimum-absolute-difference-in-bst",
+      "program": "/Users/hqb/project/2026/Algorithm/problems/11_Binary_Search_Tree/0530_minimum-absolute-difference-in-bst/build/Debug/outDebug"
+    }
+  ]
+}

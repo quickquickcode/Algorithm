@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Build 530 Debug",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "-O0",
+                "${workspaceFolder}/problems/11_Binary_Search_Tree/0530_minimum-absolute-difference-in-bst/debug.cpp",
+                "-o",
+                "${workspaceFolder}/bin/debug_530"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "编译 530 题二叉搜索树调试程序 (debug.cpp -> bin/debug_530)"
+        },
+        {
+            "type": "shell",
+            "label": "Build Active C++ File",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "-O0",
+                "${file}",
+                "-o",
+                "${workspaceFolder}/bin/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": "build",
+            "detail": "编译当前打开的 C++ 源文件"
+        }
+    ]
+}
