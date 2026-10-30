@@ -42,7 +42,8 @@ Algorithm/
     ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199, 637)
     ├── 11_Binary_Search_Tree/     # 专题 11：二叉搜索树 (530)
     ├── 16_Multidimensional_DP/    # 专题 16：多维动态规划 (120)
-    └── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)
+    ├── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)
+    └── 21_Math/                   # 专题 21：数学 (69)
 ```
 
 ---
@@ -135,6 +136,17 @@ Algorithm/
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | 53 | [最大子数组和](https://leetcode.cn/problems/maximum-subarray/) | 🟡 中等 | 🟢 一次通过 | 负前缀和断舍离；循环自增防死循环；全负数边界初始值 | [详尽复盘笔记](problems/17_Kadane_Algorithm/0053_maximum-subarray/README.md) |
 | 918 | [环形子数组的最大和](https://leetcode.cn/problems/maximum-sum-circular-subarray/) | 🟡 中等 | ⚪ 未开始 | 最大子段和与最小子段和结合 | 待添加 |
+
+### 21. 数学 (Math)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 9 | [回文数](https://leetcode.cn/problems/palindrome-number/) | 🟢 简单 | ⚪ 未开始 | 数字反转防溢出 | 待添加 |
+| 66 | [加一](https://leetcode.cn/problems/plus-one/) | 🟢 简单 | ⚪ 未开始 | 数组模拟进位 | 待添加 |
+| 172 | [阶乘后的零](https://leetcode.cn/problems/factorial-trailing-zeroes/) | 🟡 中等 | ⚪ 未开始 | 因子 5 计数法 | 待添加 |
+| 69 | [x 的平方根](https://leetcode.cn/problems/sqrtx/) | 🟢 简单 | 🟡 踩坑修正 | 范围界定；防大数乘法溢出（double或除法替代）；后续二分二刷；39ms | [详尽复盘笔记](problems/21_Math/0069_sqrtx/README.md) |
+| 50 | [Pow(x, n)](https://leetcode.cn/problems/powx-n/) | 🟡 中等 | ⚪ 未开始 | 快速幂与负指数处理 | 待添加 |
+| 149 | [直线上最多的点数](https://leetcode.cn/problems/max-points-on-a-line/) | 🔴 困难 | ⚪ 未开始 | 斜率哈希统计 | 待添加 |
+
 | ... | *(后续 140 题已按专题预备好目录架构)* | | | | |
 
 ---

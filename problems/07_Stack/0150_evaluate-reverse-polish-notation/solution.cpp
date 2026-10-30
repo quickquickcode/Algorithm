@@ -1,4 +1,14 @@
 class Solution {
+private:
+    int trans(string s){
+        int result=0;
+        int k=1;
+        for(int i=s.size()-1;i>=0;i--){
+            result += (int) (s[i]-'0')*k;
+            k*=10;
+        }
+        return result;
+    }
 public:
     int evalRPN(vector<string>& tokens) {
         std::stack<int> st={};

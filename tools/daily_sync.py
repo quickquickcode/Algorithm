@@ -63,6 +63,7 @@ KNOWN_QUESTION_TOPIC = {
     "insert-interval": "06_Intervals",
     "evaluate-reverse-polish-notation": "07_Stack",
     "happy-number": "05_Hashmap",
+    "sqrtx": "21_Math",
     "add-two-numbers": "08_Linked_List",
     "rotate-list": "08_Linked_List",
     "linked-list-cycle": "08_Linked_List",
@@ -769,6 +770,88 @@ def generate_problem_readme(q_data: dict, slug: str, submissions_meta: list, acc
             "- [ ] 区分负数与减法算符：必须检查字符串长度 `t.size() == 1`！",
             "- [ ] 除法与减法运算严格检查左右操作数顺序（`a / b` 而非 `b / a`）！"
         ])
+    elif slug == "sqrtx":
+        lines.extend([
+            "- **一句话题意**：给你一个非负整数 `x` ，计算并返回 `x` 的算术平方根。由于返回类型是整数，结果只保留整数部分，小数部分将被舍去。",
+            "- **核心规则与约束**：",
+            "  - $0 \\le x \\le 2^{31} - 1$",
+            "  - 不能使用任何内置的指数函数和算符，例如 `pow(x, 0.5)` 或者 `x ** 0.5`。",
+            "",
+            "---",
+            "",
+            "## 2. 真实提交迭代轨迹（全记录）",
+            "",
+            "| 提交序号 | 提交编号 | 判题状态 | 提交时间 | 运行用时 | 核心特征与错因剖析 | 源码切片链接 |",
+            "| :---: | :---: | :---: | :---: | :---: | :--- | :---: |"
+        ])
+        reasons_69 = [
+            "逻辑错误 (WA)：后置自减 `return result--;` 返回的是减前的值；且 `<` 漏判完全平方数",
+            "逻辑错误 (WA)：修正为 `return result - 1;`，但仍写为 `<` 导致完全平方数（如 4）返回偏小",
+            "运行崩溃 (RE)：修正为 `<= x`，但在极大用例（x 接近 2^31-1）时，`int` 类型 `result * result` 超过 2147483647 触发 32 位有符号整数溢出段错误崩溃",
+            "**完全攻克** (AC 39 ms)：将 `result` 声明为 `double` 彻底化解整数溢出，顺利通过全用例！🎉"
+        ]
+        for idx, s in enumerate(submissions_meta, 1):
+            sid = s["id"]
+            st = s["status_display"]
+            t_str = datetime.fromtimestamp(s["timestamp"]).strftime("%H:%M:%S")
+            fname = f"{idx:02d}_{sid}_{st.replace(' ', '_')}.cpp"
+            st_badge = "✅ **Accepted**" if st == "Accepted" else f"❌ {st}"
+            rt = s.get("runtime", "N/A")
+            comm = reasons_69[idx - 1] if idx <= len(reasons_69) else "力扣提交"
+            lines.append(f"| **{idx:02d}** | `{sid}` | {st_badge} | {t_str} | {rt} | {comm} | [{fname}](history/{fname}) |")
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 3. 错因深层复盘与认知跃迁",
+            "",
+            "### 1. 32 位有符号整数溢出陷阱（$46341^2 > 2^{31}-1$）",
+            "- **数学边界**：$2^{31} - 1 = 2147483647$。而 $\\lfloor \\sqrt{2^{31}-1} \\rfloor = 46340$。",
+            "- 当 `result` 走到 46341 时，$46341^2 = 2147488281 > 2147483647$。",
+            "- 如果变量定义为 `int`，此时在 C++ 中直接发生**有符号整型溢出（Signed Integer Overflow）**，这是未定义行为（UB），LeetCode 的运行时检测会直接抛出 Runtime Error！",
+            "- **解决方案**：",
+            "  1. 你的方案：使用 `double result = 0;` 或 `long long`；",
+            "  2. 更优雅的乘法转除法方案：`result <= x / result`（彻底规避溢出风险）。",
+            "",
+            "### 2. 算法效率跃迁：从线性探测 $O(\\sqrt{x})$ 到二分查找 $O(\\log x)$",
+            "- 当前线性步进解法：在 0 到 46340 之间单步自增，最坏情况下循环 46340 次，耗时 39 ms。",
+            "- **标杆二分查找解法**：在区间 $[0, x]$ 内二分搜索满足 $mid \\le x / mid$ 的最大整数，最多只需判断 31 次，**0ms 秒杀**！",
+            "",
+            "---",
+            "",
+            "## 4. 标杆最优解与进阶二分模板",
+            "",
+            "### 解法 A：你的 AC 解法（double 线性步进防溢出）",
+            "- 详见 [solution.cpp](solution.cpp)，39 ms，内存 8.3 MB。",
+            "",
+            "### 解法 B：二分查找标准模板（0ms 进阶标杆）",
+            "```cpp",
+            "class Solution {",
+            "public:",
+            "    int mySqrt(int x) {",
+            "        if (x == 0) return 0;",
+            "        int left = 1, right = x, ans = 0;",
+            "        while (left <= right) {",
+            "            int mid = left + (right - left) / 2;",
+            "            if (mid <= x / mid) {",
+            "                ans = mid;",
+            "                left = mid + 1;",
+            "            } else {",
+            "                right = mid - 1;",
+            "            }",
+            "        }",
+            "        return ans;",
+            "    }",
+            "};",
+            "```",
+            "",
+            "---",
+            "",
+            "## 5. 避坑 Checklist",
+            "- [ ] 平方计算严禁裸写 `mid * mid <= x`，必须写成 `mid <= x / mid` 防整型溢出！",
+            "- [ ] 完全平方数判断必须使用 `<=` 而非 `<`！",
+            "- [ ] 特判 $x = 0$ 的除以零风险！"
+        ])
     else:
         # 通用模板填充
         lines.extend([
@@ -969,6 +1052,32 @@ def update_dashboard(repo_root: str):
             old_61 = r"(\| 61 \| \[旋转链表\].*?\n)"
             new_2 = "| 2 | [两数相加](https://leetcode.cn/problems/add-two-numbers/) | 🟡 中等 | 🟡 踩坑修正 | 模拟高精度加法；商余进位分离；最高位进位新建节点补齐；7ms | [详尽复盘笔记](problems/08_Linked_List/0002_add-two-numbers/README.md) |\n\\1"
             content = re.sub(old_61, new_2, content)
+
+    # 检查并更新 目录树导航 中的 数学
+    if "21_Math" not in content:
+        tree_needle = "    └── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)\n"
+        tree_insert = "    ├── 17_Kadane_Algorithm/       # 专题 17：Kadane 算法 (53)\n    └── 21_Math/                   # 专题 21：数学 (69)\n"
+        if tree_needle in content:
+            content = content.replace(tree_needle, tree_insert)
+
+    # 检查并插入 数学 (Math) 表格
+    if "### 21. 数学 (Math)" not in content:
+        math_section = """### 21. 数学 (Math)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 9 | [回文数](https://leetcode.cn/problems/palindrome-number/) | 🟢 简单 | ⚪ 未开始 | 数字反转防溢出 | 待添加 |
+| 66 | [加一](https://leetcode.cn/problems/plus-one/) | 🟢 简单 | ⚪ 未开始 | 数组模拟进位 | 待添加 |
+| 172 | [阶乘后的零](https://leetcode.cn/problems/factorial-trailing-zeroes/) | 🟡 中等 | ⚪ 未开始 | 因子 5 计数法 | 待添加 |
+| 69 | [x 的平方根](https://leetcode.cn/problems/sqrtx/) | 🟢 简单 | 🟡 踩坑修正 | 范围界定；防大数乘法溢出（double或除法替代）；后续二分二刷；39ms | [详尽复盘笔记](problems/21_Math/0069_sqrtx/README.md) |
+| 50 | [Pow(x, n)](https://leetcode.cn/problems/powx-n/) | 🟡 中等 | ⚪ 未开始 | 快速幂与负指数处理 | 待添加 |
+| 149 | [直线上最多的点数](https://leetcode.cn/problems/max-points-on-a-line/) | 🔴 困难 | ⚪ 未开始 | 斜率哈希统计 | 待添加 |
+
+"""
+        content = re.sub(
+            r"(\| 918 \| \[环形子数组的最大和\].*?\n)",
+            r"\1\n" + math_section,
+            content
+        )
 
     with open(readme_path, "w", encoding="utf-8") as f:
         f.write(content)
