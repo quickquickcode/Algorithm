@@ -383,8 +383,112 @@ def generate_problem_readme(q_data: dict, slug: str, submissions_meta: list, acc
             "- [ ] $k$ 是否进行了有效的链表长度取模处理以防止大数溢出与无用循环？",
             "- [ ] 搬运或断开后，链表新的末尾节点的 `next` 是否明确赋为了 `nullptr`？"
         ])
-    else:
-        # 通用模板填充
+    elif slug == "jump-game-ii":
+        lines.extend([
+            "- **一句话题意**：给定一个长度为 $n$ 的 0 索引整数数组 `nums`，初始位置为 `nums[0]`。每个元素 `nums[i]` 表示从索引 `i` 向前跳转的最大长度。返回到达 `nums[n - 1]` 的最小跳跃次数。",
+            "- **核心约束与测试特性**：",
+            "  - $1 \\le nums.length \\le 10^4$",
+            "  - $0 \\le nums[i] \\le 1000$",
+            "  - 生成的测试用例必定可以到达 `nums[n - 1]`",
+            "  - 边界特例：$n = 1$（起手就在终点），跳跃次数为 0，需先验防御",
+            "",
+            "---",
+            "",
+            "## 2. 真实提交迭代轨迹（全记录）",
+            "",
+            "本题在 10 分钟内记录了 10 次高密度的实战调试，真实呈现了从自底向上原地 DP 踩坑、越界内存崩溃 (RE)、Off-by-one 补偿陷阱到最终通过的完整心路：",
+            "",
+            "| 提交序号 | 提交编号 | 判题状态 | 提交时间 | 运行用时 | 通过用例 | 核心特征与错因剖析 | 源码切片链接 |",
+            "| :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |"
+        ])
+        reasons_45 = [
+            "逆向 DP 状态覆盖混乱：$i$ 从 $p$ 开始且 $j$ 从 0 开始，把自身当成跳跃目标且漏加步数 (+1)",
+            "补加 +1，但单元素直接执行，返回 nums[0]-1 出现负值与偏差",
+            "调整初始极值 min=1000，但内层 j 依然从 0 开始导致自身未更新数据干扰计算",
+            "补上 `if (!p) return 0;` 单元素特判，但内层循环未做数组越界防御",
+            "增加 `if(nums[i])` 过滤 0 步长，但步长范围与内层循环仍有偏差",
+            "步长判断改用 `j <= nums[i]`，当 $i+j \\ge n$ 时触发越界内存崩溃 (Runtime Error)",
+            "加上 `i+j < nums.size()` 越界防御，通过数升至 21，但 $j$ 从 0 开始使得 nums[i] 自身数值干扰 min 计算",
+            "重大突破：调整边界 $i$ 从 $p-1$ 开始、$j$ 从 1 开始；但残留 `return nums[0]-1;` 导致答案偏小 1",
+            "调大 min 为 10000 防溢出截断，仍未修正 `return nums[0]-1;`",
+            "改回纯正的 `return nums[0];`，**逆向原地 DP 解法 111/111 全用例通过 AC**！🎉"
+        ]
+        for idx, s in enumerate(submissions_meta, 1):
+            sid = s["id"]
+            st = s["status_display"]
+            t_str = datetime.fromtimestamp(s["timestamp"]).strftime("%H:%M:%S")
+            fname = f"{idx:02d}_{sid}_{st.replace(' ', '_')}.cpp"
+            st_badge = "✅ **Accepted**" if st == "Accepted" else f"❌ {st}"
+            rt = s.get("runtime", "N/A")
+            reason = reasons_45[idx - 1] if idx <= len(reasons_45) else "调试代码"
+            lines.append(f"| **{idx:02d}** | `{sid}` | {st_badge} | {t_str} | {rt} | {reason} | [{fname}](history/{fname}) |")
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 3. 错因深层复盘与认知跃迁",
+            "",
+            "### 1. 原地复用数组 DP 的“状态污染”陷阱",
+            "- **陷阱**：在把 `nums[i]` 复用为 $dp[i]$（从索引 $i$ 到达终点所需的最小跳跃步数）时，如果 $j$ 从 0 开始循环：",
+            "  `min = std::min(min, nums[i + 0] + 1);`",
+            "  此时 `nums[i]` 存放的还是原始的最大跳跃跨度，而不是 DP 状态值！将“跳跃能力”和“历史步数”混用造成灾难。",
+            "- **破局**：步长必须严格为正整数（$j \\ge 1$），且当前点 $i$ 的最优步数只能由已经计算好的后续位置 $i+j$ 转移而来：",
+            "  $$dp[i] = 1 + \\min_{1 \\le j \\le nums[i],\\, i+j < n} dp[i+j]$$",
+            "",
+            "### 2. 数组越界防御的必要性",
+            "- 虽然测试用例保证能到达终点，但某个位置的跳跃能力 `nums[i]` 可能极大（例如在下标 2 处跳 100 步直接飞出数组）。",
+            "- `for (int j = 1; j <= nums[i] && i + j < nums.size(); j++)` 中的 `i + j < nums.size()` 必须作为短路保护条件，否则立刻触发越界访问内存崩溃 (RE)。",
+            "",
+            "### 3. Off-by-one 补偿补丁的心智负担",
+            "- 前期因为 $j=0$ 多算了一次自跳，写了 `return nums[0] - 1;` 试图通过外层补丁掩盖内层缺陷；",
+            "- 当内层逻辑修正为 $j \\in [1, nums[i]]$ 后，必须果断摘除补偿补丁，回归客观的 `return nums[0];`。",
+            "",
+            "---",
+            "",
+            "## 4. 标杆题解与进阶双模型对比",
+            "",
+            "### 模型 A：逆向自底向上原地动态规划（你的 AC 解法）",
+            "- **核心源码**：[solution.cpp](solution.cpp)",
+            "- **时间复杂度**：最坏情况 $O(N^2)$（当跳跃步数较大时需多次内层扫描）。在力扣 111 个测试用例下耗时 55 ms。",
+            "- **空间复杂度**：严格 $O(1)$，直接复用原数组存储状态，零额外内存开销！",
+            "",
+            "### 模型 B：正向贪心双边界法（电量跃迁模型 —— 0ms 终极标杆）",
+            "- **核心洞察**：",
+            "  我们并不关心具体每一步跳到哪个格子上，只关心**当前这一跳的最远覆盖范围 `curEnd`**。",
+            "  - 在当前跳跃范围 $[\\dots, curEnd]$ 内遍历时，实时记录下一跳能达到的全局最远位置 `maxReach = max(maxReach, i + nums[i])`。",
+            "  - 一旦指针遍历到了当前跳跃的边界 `curEnd`（说明这一跳的能量耗尽，必须再跳一次）：",
+            "    - `steps++`",
+            "    - `curEnd = maxReach`",
+            "    - 若 `curEnd >= n - 1`，可提前终止剪枝！",
+            "- **C++ 标杆代码**：",
+            "  ```cpp",
+            "  class Solution {",
+            "  public:",
+            "      int jump(vector<int>& nums) {",
+            "          int n = nums.size();",
+            "          if (n <= 1) return 0;",
+            "          int steps = 0, curEnd = 0, maxReach = 0;",
+            "          for (int i = 0; i < n - 1; ++i) {",
+            "              maxReach = max(maxReach, i + nums[i]);",
+            "              if (i == curEnd) {",
+            "                  steps++;",
+            "                  curEnd = maxReach;",
+            "                  if (curEnd >= n - 1) break;",
+            "              }",
+            "          }",
+            "          return steps;",
+            "      }",
+            "  };",
+            "  ```",
+            "- **复杂度对比**：单次线性扫描 $O(N)$，空间严格 $O(1)$，**0 ms 击败 100%**！",
+            "",
+            "---",
+            "",
+            "## 5. 避坑 Checklist",
+            "- [ ] $n = 1$ 起点即终点是否进行了先验特判返回 0？",
+            "- [ ] 内层循环探索是否添加了 `i + j < nums.size()` 越界保护？",
+            "- [ ] 正向贪心循环上限是否停在 $n-2$（到达最后一个元素前无需再次跳跃）？"
+        ])
         lines.extend([
             f"- **一句话题意**：{title_cn}",
             "",
@@ -494,14 +598,22 @@ def update_dashboard(repo_root: str):
     new_122 = r"| 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | 🟢 一次通过 | 贪心收集正收益；波谷波峰转化；相邻差值累加；0ms 双百 | [详尽复盘笔记](problems/01_Array_String/0122_best-time-to-buy-and-sell-stock-ii/README.md) |"
     content = re.sub(old_122, new_122, content)
 
+    # 更新 45 题表格行
+    old_45 = r"\| 45 \| \[跳跃游戏 II\].*?\| 待添加 \|"
+    new_45 = r"| 45 | [跳跃游戏 II](https://leetcode.cn/problems/jump-game-ii/) | 🟡 中等 | 🟡 踩坑修正 | 逆向原地 DP 状态转移；内层越界截断；正向贪心双边界 $O(N)$ 优化 | [详尽复盘笔记](problems/01_Array_String/0045_jump-game-ii/README.md) |"
+    content = re.sub(old_45, new_45, content)
+
     # 检查并更新 目录树导航
     if "08_Linked_List" not in content:
         tree_needle = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n"
         tree_insert = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n    ├── 08_Linked_List/            # 专题 8：链表 (61)\n"
         if tree_needle in content:
             content = content.replace(tree_needle, tree_insert)
-    if "42, 122" not in content and "80, 42)" in content:
-        content = content.replace("80, 42)", "80, 42, 122)")
+    if "42, 122, 45" not in content:
+        if "42, 122" in content:
+            content = content.replace("42, 122", "42, 122, 45")
+        elif "80, 42)" in content:
+            content = content.replace("80, 42)", "80, 42, 122, 45)")
 
     # 检查并插入 链表 (Linked List) 表格
     if "### 8. 链表 (Linked List)" not in content:
@@ -552,26 +664,38 @@ def sync_submissions():
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
     # 按题目识别并去重需要同步的题目 slug 列表
-    # 我们特别提取今日或者近期有提交的题目
+    # 动态通过 GraphQL 提交详情提取 question.titleSlug
     recent_slugs = set()
-    for s in subs[:30]:
+    title_to_slug = {}
+    for s in subs[:40]:
         title = s.get("title", "")
-        # 从 title 反查或通过已知映射匹配
-        matched_slug = None
-        for slug, kw in [
-            ("best-time-to-buy-and-sell-stock-ii", "买卖股票的最佳时机 II"),
-            ("rotate-list", "旋转链表"),
-            ("minimum-absolute-difference-in-bst", "二叉搜索树的最小绝对差"),
-            ("average-of-levels-in-binary-tree", "二叉树的层平均值"),
-            ("remove-duplicates-from-sorted-array-ii", "删除有序数组中的重复项 II"),
-            ("set-matrix-zeroes", "矩阵置零"),
-            ("rotate-image", "旋转图像")
-        ]:
-            if kw in title:
-                matched_slug = slug
-                break
-        if matched_slug:
-            recent_slugs.add(matched_slug)
+        if title in title_to_slug:
+            recent_slugs.add(title_to_slug[title])
+            continue
+        sub_id = s.get("id")
+        detail = fetch_submissions.get_submission_detail(str(sub_id), cookie)
+        slug = None
+        if detail and detail.get("question"):
+            slug = detail["question"].get("titleSlug")
+        if not slug:
+            # 常见 fallback
+            for k_slug, kw in [
+                ("jump-game-ii", "跳跃游戏 II"),
+                ("jump-game", "跳跃游戏"),
+                ("best-time-to-buy-and-sell-stock-ii", "买卖股票的最佳时机 II"),
+                ("rotate-list", "旋转链表"),
+                ("minimum-absolute-difference-in-bst", "二叉搜索树的最小绝对差"),
+                ("average-of-levels-in-binary-tree", "二叉树的层平均值"),
+                ("remove-duplicates-from-sorted-array-ii", "删除有序数组中的重复项 II"),
+                ("set-matrix-zeroes", "矩阵置零"),
+                ("rotate-image", "旋转图像")
+            ]:
+                if kw in title:
+                    slug = k_slug
+                    break
+        if slug:
+            title_to_slug[title] = slug
+            recent_slugs.add(slug)
 
     print(f"[*] 待分析同步的题目列表: {list(recent_slugs)}")
 
@@ -697,8 +821,10 @@ def sync_submissions():
     if res_status.stdout.strip():
         print("\n[*] 检测到工作区变更，正在自动执行 git add, commit, push...")
         today_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        active_fids = [p['fid'] for p in synced_problems_summary if p.get('new_count', 0) > 0]
+        fids_str = ", ".join(active_fids) if active_fids else "submissions"
+        commit_msg = f"feat(sync): record Problem {fids_str} with submission history and update tracker ({today_str})"
         subprocess.run(["git", "add", "."], cwd=repo_root)
-        commit_msg = f"feat(sync): record Problem 122 and 61 (0ms) with submission history and update tracker ({today_str})"
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=repo_root)
         push_res = subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, capture_output=True, text=True)
         if push_res.returncode == 0:

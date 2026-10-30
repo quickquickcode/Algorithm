@@ -113,6 +113,13 @@ def get_submission_detail(sub_id: str, cookie: str):
         memoryPercentile
         passedTestCaseCnt
         totalTestCaseCnt
+        question {
+          questionId
+          questionFrontendId
+          title
+          titleSlug
+          translatedTitle
+        }
       }
     }
     """
