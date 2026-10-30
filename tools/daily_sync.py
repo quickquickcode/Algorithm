@@ -61,6 +61,8 @@ KNOWN_QUESTION_TOPIC = {
     "spiral-matrix": "04_Matrix",
     "merge-intervals": "06_Intervals",
     "insert-interval": "06_Intervals",
+    "happy-number": "05_Hashmap",
+    "add-two-numbers": "08_Linked_List",
     "rotate-list": "08_Linked_List",
     "linked-list-cycle": "08_Linked_List",
     "merge-two-sorted-lists": "08_Linked_List",
@@ -489,6 +491,189 @@ def generate_problem_readme(q_data: dict, slug: str, submissions_meta: list, acc
             "- [ ] 内层循环探索是否添加了 `i + j < nums.size()` 越界保护？",
             "- [ ] 正向贪心循环上限是否停在 $n-2$（到达最后一个元素前无需再次跳跃）？"
         ])
+    elif slug == "happy-number":
+        lines.extend([
+            "- **一句话题意**：编写一个算法来判断一个数 $n$ 是不是快乐数。快乐数定义为：对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和，重复这个过程直到这个数变为 1，也可能是无限循环但始终变不到 1。如果可以变为 1，那么这个数就是快乐数。",
+            "- **核心特征与测试规模**：",
+            "  - $1 \\le n \\le 2^{31} - 1$",
+            "  - 结果必定只有两种：收敛到 1（快乐数），或陷入固定的环形循环中永不为 1。",
+            "",
+            "---",
+            "",
+            "## 2. 真实提交迭代轨迹（全记录）",
+            "",
+            "| 提交序号 | 提交编号 | 判题状态 | 提交时间 | 运行用时 | 通过用例 | 核心特征与错因剖析 | 源码切片链接 |",
+            "| :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |"
+        ])
+        reasons_202 = [
+            "致命未初始化陷阱：`int sum;` 未赋初值 0，栈内存随机值导致第 1 轮累加完全失控 (WA 303/423)",
+            "重新提交时仍未发现未初始化缺陷，结果一致 (WA 312/423)",
+            "**关键纠偏**：修正为 `int sum = 0;`，单层循环与 vector 查重完全正确，**0ms 击败 100% 秒杀通过**！🎉"
+        ]
+        for idx, s in enumerate(submissions_meta, 1):
+            sid = s["id"]
+            st = s["status_display"]
+            t_str = datetime.fromtimestamp(s["timestamp"]).strftime("%H:%M:%S")
+            fname = f"{idx:02d}_{sid}_{st.replace(' ', '_')}.cpp"
+            st_badge = "✅ **Accepted**" if st == "Accepted" else f"❌ {st}"
+            rt = s.get("runtime", "N/A")
+            comm = reasons_202[idx - 1] if idx <= len(reasons_202) else "力扣提交"
+            lines.append(f"| **{idx:02d}** | `{sid}` | {st_badge} | {t_str} | {rt} | {comm} | [{fname}](history/{fname}) |")
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 3. 错因深层复盘与认知跃迁",
+            "",
+            "### 1. C++ 变量未初始化未定义行为（Undefined Behavior）",
+            "- **踩坑点**：`int sum;` 在函数体内声明时，编译器不会默认给它清零，它的初值是当前调用栈帧上残留的随机垃圾数据！",
+            "- **破坏性**：第一轮内层循环 `sum += temp * temp;` 直接在随机垃圾值上累加，导致第一次计算的平方和错得离谱。虽然循环末尾写了 `sum = 0;`，但第一步已经全盘皆输。",
+            "- **代码规范法则**：**尽可能缩小变量的作用域**！将 `int sum = 0;` 直接定义在最内层需要的循环块内，杜绝变量生命周期混乱。",
+            "",
+            "### 2. 隐式链表与 Floyd 快慢指针判圈算法（$O(1)$ 空间认知跃迁）",
+            "- **数学本质**：每一个正整数各位平方和都有唯一的计算结果，这在逻辑上天然形成了一个**隐式单向链表**：",
+            "  - 若最后收敛到 1，相当于链表末尾指向 1 的自环；",
+            "  - 若陷入循环（如著名的 $4 \\to 16 \\to 37 \\to 58 \\to 89 \\to 145 \\to 42 \\to 20 \\to 4$），相当于**链表中存在环**！",
+            "- **快慢双指针（Floyd's Cycle-Finding Algorithm）**：",
+            "  - `slow` 每次算 1 次平方和；",
+            "  - `fast` 每次算 2 次平方和；",
+            "  - 两者必定在环内相遇，无需任何 `vector` 或 `unordered_set`，额外空间为严格的 **$O(1)$**！",
+            "",
+            "---",
+            "",
+            "## 4. 标杆题解与双模型对比",
+            "",
+            "### 模型 A：自研 vector 查重法（你的 AC 解法）",
+            "- **核心源码**：[solution.cpp](solution.cpp)",
+            "- **运行用时**：0 ms（击败 100.00%），内存 8.3 MB。",
+            "",
+            "### 模型 B：快慢指针隐式链表判圈（$O(1)$ 空间进阶标杆）",
+            "```cpp",
+            "class Solution {",
+            "public:",
+            "    int getNext(int n) {",
+            "        int sum = 0;",
+            "        while (n > 0) {",
+            "            int d = n % 10;",
+            "            n /= 10;",
+            "            sum += d * d;",
+            "        }",
+            "        return sum;",
+            "    }",
+            "",
+            "    bool isHappy(int n) {",
+            "        int slow = n;",
+            "        int fast = getNext(n);",
+            "        while (fast != 1 && slow != fast) {",
+            "            slow = getNext(slow);",
+            "            fast = getNext(getNext(fast));",
+            "        }",
+            "        return fast == 1;",
+            "    }",
+            "};",
+            "```",
+            "",
+            "---",
+            "",
+            "## 5. 避坑 Checklist",
+            "- [ ] 任何局部累加变量声明时必须显式初始化（如 `int sum = 0;`）！",
+            "- [ ] 快慢指针法初始步长必须错开（`slow = n, fast = getNext(n)`），否则初始 `slow == fast` 直接跳出循环！"
+        ])
+    elif slug == "add-two-numbers":
+        lines.extend([
+            "- **一句话题意**：给你两个非空的链表，表示两个非负的整数。它们每位数字都是按照逆序的方式存储的，并且每个节点只能存储一位数字。请你将两个数相加，并以相同形式返回一个表示和的链表。",
+            "- **核心特征与约束**：",
+            "  - 每个链表中的节点数在范围 $[1, 100]$ 内",
+            "  - $0 \\le \\text{Node.val} \\le 9$",
+            "  - 题目数据保证列表表示的数字不含前导零（除 0 本身外）",
+            "",
+            "---",
+            "",
+            "## 2. 真实提交迭代轨迹（全记录）",
+            "",
+            "本题经历了 8 次极其真实的试错迭代，完整呈现了从 C++ 构造语法编译错误、商余进位混淆、指针单边推进死锁、到最高位遗留进位补齐的全过程：",
+            "",
+            "| 提交序号 | 提交编号 | 判题状态 | 提交时间 | 运行用时 | 核心特征与错因剖析 | 源码切片链接 |",
+            "| :---: | :---: | :---: | :---: | :---: | :--- | :---: |"
+        ])
+        reasons_2 = [
+            "语法错误 (CE)：构造函数括号笔误 `ListNode((0,nullptr);` 缺少右括号且函数无返回值",
+            "语法错误 (CE)：补上返回值，但 `ListNode((0,nullptr);` 仍多一个左括号",
+            "语法错误 (CE)：`result=new ListNode((0,p);` 括号未闭合",
+            "逻辑错误 (WA 1/1569)：进位计算混淆，把整除写成取模 `in=(l1->val+in)%10`；且分支漏推进指针",
+            "逻辑错误 (WA 6/1569)：补全了分支指针推进，但进位依然错写成 `%10`",
+            "**重大突破** (WA 1366/1569)：进位纠正为 `/10`，通过率达 87%；但漏处理最高位遗留进位新建节点（如 5+5=10 丢失最高位 1）",
+            "逻辑错误 (WA 1145/1569)：试图修改循环条件 `while(l1 || l2 && !in)`，逻辑运算符优先级混乱（&&高于||）导致死循环/用例倒退",
+            "**完全攻克** (AC 7 ms)：恢复正常 while 并在循环结束后单独处理最高位进位 `if(in) p->next=new ListNode(in);`，**1569/1569 全用例通过**！🎉"
+        ]
+        for idx, s in enumerate(submissions_meta, 1):
+            sid = s["id"]
+            st = s["status_display"]
+            t_str = datetime.fromtimestamp(s["timestamp"]).strftime("%H:%M:%S")
+            fname = f"{idx:02d}_{sid}_{st.replace(' ', '_')}.cpp"
+            st_badge = "✅ **Accepted**" if st == "Accepted" else f"❌ {st}"
+            rt = s.get("runtime", "N/A")
+            comm = reasons_2[idx - 1] if idx <= len(reasons_2) else "力扣提交"
+            lines.append(f"| **{idx:02d}** | `{sid}` | {st_badge} | {t_str} | {rt} | {comm} | [{fname}](history/{fname}) |")
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 3. 错因深层复盘与认知跃迁",
+            "",
+            "### 1. 进位计算的“商余两分法”",
+            "- **混淆点**：把当前位数值和进位都写成了 `% 10`：",
+            "  `in = (l1->val + l2->val + in) % 10;`",
+            "- **本质区别**：",
+            "  - **当前位保留值**是和对 10 **取模（余数）**：`val = sum % 10;`",
+            "  - **向高位传递的进位**是和对 10 **整除（商）**：`carry = sum / 10;`",
+            "",
+            "### 2. 链表相加结束后的“最高位遗留进位”",
+            "- **盲区**：当 `l1` 与 `l2` 都走完时，不代表结果链表已经结束！",
+            "- **经典陷阱**：对于 `[5] + [5]`，遍历完后 `carry = 1`。如果不处理，链表只有 `[0]`，实际答案应为 `[0, 1]`（即 10）。",
+            "- **处理方案**：循环结束后检查 `if (carry > 0)` 必须追加新建节点 `p->next = new ListNode(carry);`。",
+            "",
+            "### 3. 虚拟头节点（Dummy Head）与三路合并模式",
+            "- 你的代码通过嵌套 3 个 `if-else` 分别处理 `l1 && l2`、`l1`、`l2`，逻辑正确但存在代码冗余。",
+            "- **标杆简化模式**：将所有情况归并为单层循环 `while (l1 || l2 || carry)`，空指针视为 0，代码行数缩减 60% 且完全杜绝分类遗漏！",
+            "",
+            "---",
+            "",
+            "## 4. 标杆题解与精简实现",
+            "",
+            "### 解法 A：你的 AC 解法（三路分支 + 尾部进位挂载）",
+            "- 详见 [solution.cpp](solution.cpp)，用时 7 ms，内存 75.8 MB。",
+            "",
+            "### 解法 B：三合一单循环极致模板（推荐后续复习使用）",
+            "```cpp",
+            "class Solution {",
+            "public:",
+            "    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {",
+            "        ListNode dummy(0);",
+            "        ListNode* tail = &dummy;",
+            "        int carry = 0;",
+            "        while (l1 || l2 || carry) {",
+            "            int sum = carry;",
+            "            if (l1) { sum += l1->val; l1 = l1->next; }",
+            "            if (l2) { sum += l2->val; l2 = l2->next; }",
+            "            carry = sum / 10;",
+            "            tail->next = new ListNode(sum % 10);",
+            "            tail = tail->next;",
+            "        }",
+            "        return dummy.next;",
+            "    }",
+            "};",
+            "```",
+            "",
+            "---",
+            "",
+            "## 5. 避坑 Checklist",
+            "- [ ] 当前位写 `sum % 10`，进位写 `sum / 10`，绝不混淆！",
+            "- [ ] 是否处理了最高位进位（`carry != 0`）新建节点？",
+            "- [ ] 虚拟头节点是否建议在栈上创建 `ListNode dummy(0);` 避免内存泄漏？"
+        ])
+    else:
+        # 通用模板填充
         lines.extend([
             f"- **一句话题意**：{title_cn}",
             "",
@@ -604,22 +789,52 @@ def update_dashboard(repo_root: str):
     content = re.sub(old_45, new_45, content)
 
     # 检查并更新 目录树导航
-    if "08_Linked_List" not in content:
-        tree_needle = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n"
-        tree_insert = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n    ├── 08_Linked_List/            # 专题 8：链表 (61)\n"
+    if "05_Hashmap" not in content:
+        tree_needle = "    ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)\n"
+        tree_insert = "    ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)\n    ├── 05_Hashmap/                # 专题 5：哈希表 (202)\n"
         if tree_needle in content:
             content = content.replace(tree_needle, tree_insert)
+
+    if "08_Linked_List" not in content:
+        tree_needle = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n"
+        tree_insert = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n    ├── 08_Linked_List/            # 专题 8：链表 (61, 2)\n"
+        if tree_needle in content:
+            content = content.replace(tree_needle, tree_insert)
+    elif "08_Linked_List/            # 专题 8：链表 (61)" in content:
+        content = content.replace("08_Linked_List/            # 专题 8：链表 (61)", "08_Linked_List/            # 专题 8：链表 (61, 2)")
+
     if "42, 122, 45" not in content:
         if "42, 122" in content:
             content = content.replace("42, 122", "42, 122, 45")
         elif "80, 42)" in content:
             content = content.replace("80, 42)", "80, 42, 122, 45)")
 
+    # 检查并插入 哈希表 (Hashmap) 表格
+    if "### 5. 哈希表 (Hashmap)" not in content:
+        hashmap_section = """### 5. 哈希表 (Hashmap)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 383 | [赎金信](https://leetcode.cn/problems/ransom-note/) | 🟢 简单 | ⚪ 未开始 | 字符频次数组计数 | 待添加 |
+| 205 | [同构字符串](https://leetcode.cn/problems/isomorphic-strings/) | 🟢 简单 | ⚪ 未开始 | 双向映射哈希表 | 待添加 |
+| 290 | [单词规律](https://leetcode.cn/problems/word-pattern/) | 🟢 简单 | ⚪ 未开始 | 字符与单词双向映射 | 待添加 |
+| 242 | [有效的字母异位词](https://leetcode.cn/problems/valid-anagram/) | 🟢 简单 | ⚪ 未开始 | 字符频次统计 | 待添加 |
+| 49 | [字母异位词分组](https://leetcode.cn/problems/group-anagrams/) | 🟡 中等 | ⚪ 未开始 | 排序字符串作为键 | 待添加 |
+| 1 | [两数之和](https://leetcode.cn/problems/two-sum/) | 🟢 简单 | ⚪ 未开始 | 一遍哈希查余数 | 待添加 |
+| 202 | [快乐数](https://leetcode.cn/problems/happy-number/) | 🟢 简单 | 🟡 踩坑修正 | 变量作用域初始化；隐式链表；Floyd 快慢指针判圈 $O(1)$ 空间；0ms 双百 | [详尽复盘笔记](problems/05_Hashmap/0202_happy-number/README.md) |
+| 219 | [存在重复元素 II](https://leetcode.cn/problems/contains-duplicate-ii/) | 🟢 简单 | ⚪ 未开始 | 滑动窗口哈希表 | 待添加 |
+| 128 | [最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/) | 🟡 中等 | ⚪ 未开始 | 哈希集合起点判断 $O(N)$ | 待添加 |
+
+"""
+        intervals_needle = "### 6. 区间 (Intervals)"
+        if intervals_needle in content:
+            content = content.replace(intervals_needle, hashmap_section + intervals_needle)
+
     # 检查并插入 链表 (Linked List) 表格
     if "### 8. 链表 (Linked List)" not in content:
         linked_list_section = """### 8. 链表 (Linked List)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
 | :---: | :--- | :---: | :---: | :--- | :---: |
+| 2 | [两数相加](https://leetcode.cn/problems/add-two-numbers/) | 🟡 中等 | 🟡 踩坑修正 | 模拟高精度加法；商余进位分离；最高位进位新建节点补齐；7ms | [详尽复盘笔记](problems/08_Linked_List/0002_add-two-numbers/README.md) |
 | 61 | [旋转链表](https://leetcode.cn/problems/rotate-list/) | 🟡 中等 | 🟡 踩坑修正 | 闭环成环与向右旋转取模折算；空链表/单节点特判；0ms 双百 | [详尽复盘笔记](problems/08_Linked_List/0061_rotate-list/README.md) |
 | 141 | [环形链表](https://leetcode.cn/problems/linked-list-cycle/) | 🟢 简单 | ⚪ 未开始 | 快慢指针判断环 | 待添加 |
 | 21 | [合并两个有序链表](https://leetcode.cn/problems/merge-two-sorted-lists/) | 🟢 简单 | ⚪ 未开始 | 虚拟头节点双指针合并 | 待添加 |
@@ -629,6 +844,12 @@ def update_dashboard(repo_root: str):
         bfs_needle = "### 10. 二叉树层次遍历 (Binary Tree BFS)"
         if bfs_needle in content:
             content = content.replace(bfs_needle, linked_list_section + bfs_needle)
+    else:
+        # 已有链表表格，检查是否添加了 2 题
+        if "[两数相加]" not in content:
+            old_61 = r"(\| 61 \| \[旋转链表\].*?\n)"
+            new_2 = "| 2 | [两数相加](https://leetcode.cn/problems/add-two-numbers/) | 🟡 中等 | 🟡 踩坑修正 | 模拟高精度加法；商余进位分离；最高位进位新建节点补齐；7ms | [详尽复盘笔记](problems/08_Linked_List/0002_add-two-numbers/README.md) |\n\\1"
+            content = re.sub(old_61, new_2, content)
 
     with open(readme_path, "w", encoding="utf-8") as f:
         f.write(content)
@@ -680,6 +901,8 @@ def sync_submissions():
         if not slug:
             # 常见 fallback
             for k_slug, kw in [
+                ("happy-number", "快乐数"),
+                ("add-two-numbers", "两数相加"),
                 ("jump-game-ii", "跳跃游戏 II"),
                 ("jump-game", "跳跃游戏"),
                 ("best-time-to-buy-and-sell-stock-ii", "买卖股票的最佳时机 II"),
@@ -712,11 +935,9 @@ def sync_submissions():
             # 找到匹配 title
             target_title = None
             for s in subs:
-                for kw, s_slug in [("买卖股票的最佳时机 II", "best-time-to-buy-and-sell-stock-ii"), ("旋转链表", "rotate-list"), ("二叉搜索树", "minimum-absolute-difference-in-bst")]:
-                    if s_slug == slug and kw in s.get("title", ""):
-                        target_title = s.get("title")
-                        break
-                if target_title:
+                t = s.get("title")
+                if title_to_slug.get(t) == slug:
+                    target_title = t
                     break
             if target_title:
                 q_subs = [s for s in subs if s.get("title") == target_title]

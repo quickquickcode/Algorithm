@@ -35,8 +35,9 @@ Algorithm/
 └── problems/                      # 题目归档（按 Top Interview 150 专题分类）
     ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42, 122, 45)
     ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)
+    ├── 05_Hashmap/                # 专题 5：哈希表 (202)
     ├── 06_Intervals/              # 专题 6：区间 (56)
-    ├── 08_Linked_List/            # 专题 8：链表 (61)
+    ├── 08_Linked_List/            # 专题 8：链表 (61, 2)
     ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199, 637)
     ├── 11_Binary_Search_Tree/     # 专题 11：二叉搜索树 (530)
     ├── 16_Multidimensional_DP/    # 专题 16：多维动态规划 (120)
@@ -47,8 +48,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`16 / 150` 已纳入档案
-- **状态统计**：🟢 一次通过/攻克: 8 | 🟡 踩坑修正/待二刷/调试: 8 | 🔴 待重做: 0
+- **总进度**：`18 / 150` 已纳入档案
+- **状态统计**：🟢 一次通过/攻克: 8 | 🟡 踩坑修正/待二刷/调试: 10 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -72,6 +73,19 @@ Algorithm/
 | 54 | [螺旋矩阵](https://leetcode.cn/problems/spiral-matrix/) | 🟡 中等 | ⚪ 未开始 | 四边界动态收缩模拟 | 待添加 |
 | 73 | [矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/) | 🟡 中等 | 🟡 待二刷 (重写最优解) | 当前解 47ms (5.05%)；需二刷升级为首行首列原地标记 $O(1)$ 空间最优解 | [详尽复盘笔记](problems/04_Matrix/0073_set-matrix-zeroes/README.md) |
 
+### 5. 哈希表 (Hashmap)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 383 | [赎金信](https://leetcode.cn/problems/ransom-note/) | 🟢 简单 | ⚪ 未开始 | 字符频次数组计数 | 待添加 |
+| 205 | [同构字符串](https://leetcode.cn/problems/isomorphic-strings/) | 🟢 简单 | ⚪ 未开始 | 双向映射哈希表 | 待添加 |
+| 290 | [单词规律](https://leetcode.cn/problems/word-pattern/) | 🟢 简单 | ⚪ 未开始 | 字符与单词双向映射 | 待添加 |
+| 242 | [有效的字母异位词](https://leetcode.cn/problems/valid-anagram/) | 🟢 简单 | ⚪ 未开始 | 字符频次统计 | 待添加 |
+| 49 | [字母异位词分组](https://leetcode.cn/problems/group-anagrams/) | 🟡 中等 | ⚪ 未开始 | 排序字符串作为键 | 待添加 |
+| 1 | [两数之和](https://leetcode.cn/problems/two-sum/) | 🟢 简单 | ⚪ 未开始 | 一遍哈希查余数 | 待添加 |
+| 202 | [快乐数](https://leetcode.cn/problems/happy-number/) | 🟢 简单 | 🟡 踩坑修正 | 变量作用域初始化；隐式链表；Floyd 快慢指针判圈 $O(1)$ 空间；0ms 双百 | [详尽复盘笔记](problems/05_Hashmap/0202_happy-number/README.md) |
+| 219 | [存在重复元素 II](https://leetcode.cn/problems/contains-duplicate-ii/) | 🟢 简单 | ⚪ 未开始 | 滑动窗口哈希表 | 待添加 |
+| 128 | [最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/) | 🟡 中等 | ⚪ 未开始 | 哈希集合起点判断 $O(N)$ | 待添加 |
+
 ### 6. 区间 (Intervals)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
 | :---: | :--- | :---: | :---: | :--- | :---: |
@@ -81,6 +95,7 @@ Algorithm/
 ### 8. 链表 (Linked List)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
 | :---: | :--- | :---: | :---: | :--- | :---: |
+| 2 | [两数相加](https://leetcode.cn/problems/add-two-numbers/) | 🟡 中等 | 🟡 踩坑修正 | 模拟高精度加法；商余进位分离；最高位进位新建节点补齐；7ms | [详尽复盘笔记](problems/08_Linked_List/0002_add-two-numbers/README.md) |
 | 61 | [旋转链表](https://leetcode.cn/problems/rotate-list/) | 🟡 中等 | 🟡 踩坑修正 | 闭环成环与向右旋转取模折算；空链表/单节点特判；0ms 双百 | [详尽复盘笔记](problems/08_Linked_List/0061_rotate-list/README.md) |
 | 141 | [环形链表](https://leetcode.cn/problems/linked-list-cycle/) | 🟢 简单 | ⚪ 未开始 | 快慢指针判断环 | 待添加 |
 | 21 | [合并两个有序链表](https://leetcode.cn/problems/merge-two-sorted-lists/) | 🟢 简单 | ⚪ 未开始 | 虚拟头节点双指针合并 | 待添加 |
