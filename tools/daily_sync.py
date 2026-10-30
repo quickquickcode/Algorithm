@@ -61,6 +61,7 @@ KNOWN_QUESTION_TOPIC = {
     "spiral-matrix": "04_Matrix",
     "merge-intervals": "06_Intervals",
     "insert-interval": "06_Intervals",
+    "evaluate-reverse-polish-notation": "07_Stack",
     "happy-number": "05_Hashmap",
     "add-two-numbers": "08_Linked_List",
     "rotate-list": "08_Linked_List",
@@ -672,6 +673,102 @@ def generate_problem_readme(q_data: dict, slug: str, submissions_meta: list, acc
             "- [ ] 是否处理了最高位进位（`carry != 0`）新建节点？",
             "- [ ] 虚拟头节点是否建议在栈上创建 `ListNode dummy(0);` 避免内存泄漏？"
         ])
+    elif slug == "evaluate-reverse-polish-notation":
+        lines.extend([
+            "- **一句话题意**：给你一个字符串数组 `tokens` ，表示一个根据逆波兰表示法表示的算术表达式。请你计算该表达式，返回一个表示表达式值的整数。",
+            "- **核心规则与约束**：",
+            "  - 有效的算符包括 `+`、`-`、`*`、`/`，每个操作数可以是整数也可以是另一个逆波兰表达式。",
+            "  - 两个整数之间的除法只保留整数部分（向零截断）。",
+            "  - 题目数据保证表达式总是有效的，不会出现除以零的情况。",
+            "  - $1 \\le tokens.length \\le 10^4$",
+            "",
+            "---",
+            "",
+            "## 2. 真实提交迭代轨迹（全记录）",
+            "",
+            "本题在 20 分钟内记录了 20 次极其真实的试错迭代，完整再现了 C++ STL 容器方法误解、负数与减号歧义引发的段错误、到最终 3ms 高效 AC 的全过程：",
+            "",
+            "| 提交序号 | 提交编号 | 判题状态 | 提交时间 | 运行用时 | 核心特征与错因剖析 | 源码切片链接 |",
+            "| :---: | :---: | :---: | :---: | :---: | :--- | :---: |"
+        ])
+        reasons_150 = [
+            "语法错误 (CE)：误以为 `st.pop()` 会返回值；switch 不支持字符串字面量 `\"+\"`；字符计算混淆 `\"0\"`",
+            "语法错误 (CE)：switch 改用单引号，但 `st.pop()` 仍作为右值赋值报错",
+            "语法错误 (CE)：修复 pop 赋值，但依然混杂字符串与字符匹配",
+            "语法错误 (CE)：持续修正 switch 与函数返回值",
+            "逻辑错误 (WA)：自研 `trans` 函数按高位在后逆向权重累加，数字解析颠倒",
+            "逻辑错误 (WA)：调整 `trans` 解析方向，但仍无法处理负数字符串",
+            "运行崩溃 (RE)：因只看首字符 `switch(tokens[i][0])`，负数如 `\"-11\"` 被误当成减号算符，对空栈执行 top/pop 崩溃",
+            "运行崩溃 (RE)：尝试在循环首部无条件 pop 两次，空栈直接段错误崩溃",
+            "运行崩溃 (RE)：误用 Python 式负索引 `tokens[i][-1]` 越界访问内存",
+            "语法错误 (CE)：switch 分支花括号不匹配导致编译中断",
+            "语法错误 (CE)：switch-case 语法格式嵌套错乱",
+            "语法错误 (CE)：花括号闭合不匹配",
+            "运行崩溃 (RE)：加上算符条件判断，但 switch 仍误写 `tokens[i][-1]` 越界",
+            "语法错误 (CE)：修复负索引时遗漏花括号与 break",
+            "运行崩溃 (RE)：算符分支执行后仍漏写 else，导致算符自身又被推进 `trans` 抛异常",
+            "语法错误 (CE)：else 分支结构与 switch 块嵌套层级错位",
+            "语法错误 (CE)：尝试改用 `std::stoi`，但括号层级仍未修齐",
+            "语法错误 (CE)：单行花括号遗漏导致编译失败",
+            "**完全攻克** (AC 3 ms)：理清算符长度判断 `t.size() == 1`、改用 `std::stoi`、花括号嵌套完全归位，**3ms 双百通过**！🎉",
+            "**精简题解** (AC 4 ms)：删除冗余的私有 `trans` 废弃代码，提交标准干净的最终解"
+        ]
+        for idx, s in enumerate(submissions_meta, 1):
+            sid = s["id"]
+            st = s["status_display"]
+            t_str = datetime.fromtimestamp(s["timestamp"]).strftime("%H:%M:%S")
+            fname = f"{idx:02d}_{sid}_{st.replace(' ', '_')}.cpp"
+            st_badge = "✅ **Accepted**" if st == "Accepted" else f"❌ {st}"
+            rt = s.get("runtime", "N/A")
+            comm = reasons_150[idx - 1] if idx <= len(reasons_150) else "力扣提交"
+            lines.append(f"| **{idx:02d}** | `{sid}` | {st_badge} | {t_str} | {rt} | {comm} | [{fname}](history/{fname}) |")
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 3. 错因深层复盘与认知跃迁",
+            "",
+            "### 1. C++ `std::stack` 的设计哲学：`top()` 与 `pop()` 严格分离",
+            "- **踩坑点**：习惯了 Python/Java 的开发者常随手写出 `int b = st.pop();`，在 C++ 中直接触发编译报错！",
+            "- **底层原理**：C++ STL 出于**异常安全性（Exception Safety）**考虑，`pop()` 返回 `void`。如果 `pop()` 在返回值时拷贝构造抛出异常，栈顶元素已经被丢弃导致数据丢失。因此必须先 `b = st.top();` 获取引用，再 `st.pop();` 弹出。",
+            "",
+            "### 2. 负数与减号算符的“双重人格”陷阱（本题最核心考点）",
+            "- **致命 Bug**：直接根据首字符判断：`switch(tokens[i][0])`。",
+            "  - 当遇到 `\"+\"`, `\"*\"`, `\"/\"` 时没有问题；",
+            "  - 但当遇到负数（如 `\"-11\"`, `\"-3\"`）时，`tokens[i][0]` 同样是 `'-'`！",
+            "  - 结果：负数被系统当作减号运算符，立刻试图从栈里弹出两个操作数，而此时栈内根本没有足够元素，引发严重段错误（Runtime Error）崩溃！",
+            "- **解耦黄金法则**：",
+            "  > **只有当字符串长度为 1 时，`'-'` 才是减法运算符；当长度大于 1 且首字符为 `'-'` 时，它必定是一个负整数！**",
+            "  ```cpp",
+            "  if (t.size() == 1 && (t[0] == '+' || t[0] == '-' || t[0] == '*' || t[0] == '/'))",
+            "  ```",
+            "",
+            "### 3. 操作数的出栈顺序与非交换律运算",
+            "- 逆波兰表达式中，先出栈的是**右操作数**，后出栈的是**左操作数**！",
+            "  ```cpp",
+            "  int b = st.top(); st.pop(); // 先出栈的是右操作数 (被减数/除数)",
+            "  int a = st.top(); st.pop(); // 后出栈的是左操作数",
+            "  // 必须是 a - b 与 a / b，绝不能写反成 b - a 或 b / a！",
+            "  ```",
+            "",
+            "### 4. 字符串转数字：避免重复造低效的自研轮子",
+            "- 手写 `trans` 函数往往容易遗漏符号位、溢出保护、进位逻辑；",
+            "- C++ 标准库内置的 `std::stoi(s)` 不仅能自动处理正负号，而且经过极致汇编级优化，效率远高于手写循环。",
+            "",
+            "---",
+            "",
+            "## 4. 标杆题解",
+            "",
+            "代码详见 [solution.cpp](solution.cpp)。",
+            "",
+            "---",
+            "",
+            "## 5. 避坑 Checklist",
+            "- [ ] `st.pop()` 返回 `void`，取值必须用 `st.top()`！",
+            "- [ ] `switch` 只能匹配整型/字符（如 `case '+'`），绝不能直接匹配 `std::string`！",
+            "- [ ] 区分负数与减法算符：必须检查字符串长度 `t.size() == 1`！",
+            "- [ ] 除法与减法运算严格检查左右操作数顺序（`a / b` 而非 `b / a`）！"
+        ])
     else:
         # 通用模板填充
         lines.extend([
@@ -795,6 +892,12 @@ def update_dashboard(repo_root: str):
         if tree_needle in content:
             content = content.replace(tree_needle, tree_insert)
 
+    if "07_Stack" not in content:
+        tree_needle = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n"
+        tree_insert = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n    ├── 07_Stack/                  # 专题 7：栈 (150)\n"
+        if tree_needle in content:
+            content = content.replace(tree_needle, tree_insert)
+
     if "08_Linked_List" not in content:
         tree_needle = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n"
         tree_insert = "    ├── 06_Intervals/              # 专题 6：区间 (56)\n    ├── 08_Linked_List/            # 专题 8：链表 (61, 2)\n"
@@ -828,6 +931,22 @@ def update_dashboard(repo_root: str):
         intervals_needle = "### 6. 区间 (Intervals)"
         if intervals_needle in content:
             content = content.replace(intervals_needle, hashmap_section + intervals_needle)
+
+    # 检查并插入 栈 (Stack) 表格
+    if "### 7. 栈 (Stack)" not in content:
+        stack_section = """### 7. 栈 (Stack)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 20 | [有效的括号](https://leetcode.cn/problems/valid-parentheses/) | 🟢 简单 | ⚪ 未开始 | 栈匹配与括号对消 | 待添加 |
+| 71 | [简化路径](https://leetcode.cn/problems/simplify-path/) | 🟡 中等 | ⚪ 未开始 | 目录栈与规范化分割 | 待添加 |
+| 155 | [最小栈](https://leetcode.cn/problems/min-stack/) | 🟡 中等 | ⚪ 未开始 | 辅助单调栈维护最小值 | 待添加 |
+| 150 | [逆波兰表达式求值](https://leetcode.cn/problems/evaluate-reverse-polish-notation/) | 🟡 中等 | 🟡 踩坑修正 | 栈操作；区分减号与负数（t.size()==1）；操作数出栈次序；3ms | [详尽复盘笔记](problems/07_Stack/0150_evaluate-reverse-polish-notation/README.md) |
+| 224 | [基本计算器](https://leetcode.cn/problems/basic-calculator/) | 🔴 困难 | ⚪ 未开始 | 符号栈与括号递归处理 | 待添加 |
+
+"""
+        linked_needle = "### 8. 链表 (Linked List)"
+        if linked_needle in content:
+            content = content.replace(linked_needle, stack_section + linked_needle)
 
     # 检查并插入 链表 (Linked List) 表格
     if "### 8. 链表 (Linked List)" not in content:
@@ -902,6 +1021,7 @@ def sync_submissions():
             # 常见 fallback
             for k_slug, kw in [
                 ("happy-number", "快乐数"),
+                ("evaluate-reverse-polish-notation", "逆波兰表达式求值"),
                 ("add-two-numbers", "两数相加"),
                 ("jump-game-ii", "跳跃游戏 II"),
                 ("jump-game", "跳跃游戏"),

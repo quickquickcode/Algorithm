@@ -37,6 +37,7 @@ Algorithm/
     ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)
     ├── 05_Hashmap/                # 专题 5：哈希表 (202)
     ├── 06_Intervals/              # 专题 6：区间 (56)
+    ├── 07_Stack/                  # 专题 7：栈 (150)
     ├── 08_Linked_List/            # 专题 8：链表 (61, 2)
     ├── 10_Binary_Tree_BFS/        # 专题 10：二叉树 BFS (199, 637)
     ├── 11_Binary_Search_Tree/     # 专题 11：二叉搜索树 (530)
@@ -48,8 +49,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`18 / 150` 已纳入档案
-- **状态统计**：🟢 一次通过/攻克: 8 | 🟡 踩坑修正/待二刷/调试: 10 | 🔴 待重做: 0
+- **总进度**：`20 / 150` 已纳入档案
+- **状态统计**：🟢 一次通过/攻克: 8 | 🟡 踩坑修正/待二刷/调试: 12 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -91,6 +92,15 @@ Algorithm/
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | 56 | [合并区间](https://leetcode.cn/problems/merge-intervals/) | 🟡 中等 | 🟡 待二刷 (待补排序解) | 排序降维；流式传送带收集；破除原地修改的沉锚效应 | [详尽复盘笔记](problems/06_Intervals/0056_merge-intervals/README.md) |
 | 57 | [插入区间](https://leetcode.cn/problems/insert-interval/) | 🟡 中等 | ⚪ 未开始 | 模拟分段合并 | 待添加 |
+
+### 7. 栈 (Stack)
+| 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| 20 | [有效的括号](https://leetcode.cn/problems/valid-parentheses/) | 🟢 简单 | ⚪ 未开始 | 栈匹配与括号对消 | 待添加 |
+| 71 | [简化路径](https://leetcode.cn/problems/simplify-path/) | 🟡 中等 | ⚪ 未开始 | 目录栈与规范化分割 | 待添加 |
+| 155 | [最小栈](https://leetcode.cn/problems/min-stack/) | 🟡 中等 | ⚪ 未开始 | 辅助单调栈维护最小值 | 待添加 |
+| 150 | [逆波兰表达式求值](https://leetcode.cn/problems/evaluate-reverse-polish-notation/) | 🟡 中等 | 🟡 踩坑修正 | 栈操作；区分减号与负数（t.size()==1）；操作数出栈次序；3ms | [详尽复盘笔记](problems/07_Stack/0150_evaluate-reverse-polish-notation/README.md) |
+| 224 | [基本计算器](https://leetcode.cn/problems/basic-calculator/) | 🔴 困难 | ⚪ 未开始 | 符号栈与括号递归处理 | 待添加 |
 
 ### 8. 链表 (Linked List)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
