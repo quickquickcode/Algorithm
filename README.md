@@ -33,7 +33,7 @@ Algorithm/
 │   ├── fetch_submissions.py       # 力扣 GraphQL 提交记录与错误代码抓取 CLI
 │   └── README.md                  # 力扣提交流程与 CLI / VS Code 插件使用指南
 └── problems/                      # 题目归档（按 Top Interview 150 专题分类）
-    ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42, 122, 45)
+    ├── 01_Array_String/           # 专题 1：数组 / 字符串 (88, 27, 26, 80, 42, 122, 45, 6, 135)
     ├── 04_Matrix/                 # 专题 4：矩阵 (48, 73)
     ├── 05_Hashmap/                # 专题 5：哈希表 (202)
     ├── 06_Intervals/              # 专题 6：区间 (56)
@@ -50,8 +50,8 @@ Algorithm/
 
 ## 📊 「面试经典 150 题」总览与当前进度看板
 
-- **总进度**：`23 / 150` 已纳入档案
-- **状态统计**：🟢 一次通过/攻克: 8 | 🟡 踩坑修正/待二刷/调试: 15 | 🔴 待重做: 0
+- **总进度**：`24 / 150` 已纳入档案
+- **状态统计**：🟢 一次通过/攻克: 8 | 🟡 踩坑修正/待二刷/调试: 16 | 🔴 待重做: 0
 
 ### 1. 数组 / 字符串 (Array / String)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
@@ -67,6 +67,8 @@ Algorithm/
 | 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | 🟢 一次通过 | 贪心收集正收益；波谷波峰转化；相邻差值累加；0ms 双百 | [详尽复盘笔记](problems/01_Array_String/0122_best-time-to-buy-and-sell-stock-ii/README.md) |
 | 55 | [跳跃游戏](https://leetcode.cn/problems/jump-game/) | 🟡 中等 | ⚪ 未开始 | 贪心维护最远边界 | 待添加 |
 | 45 | [跳跃游戏 II](https://leetcode.cn/problems/jump-game-ii/) | 🟡 中等 | 🟡 踩坑修正 | 逆向原地 DP 状态转移；内层越界截断；正向贪心双边界 $O(N)$ 优化 | [详尽复盘笔记](problems/01_Array_String/0045_jump-game-ii/README.md) |
+| 135 | [分发糖果](https://leetcode.cn/problems/candy/) | 🔴 困难 | 🟡 借鉴题解 / 待二刷 | 双向局部约束解耦；两次单向贪心扫描；$\max$ 原地融合 $O(N)$ | [详尽复盘笔记](problems/01_Array_String/0135_candy/README.md) |
+| 6 | [Z 字形变换](https://leetcode.cn/problems/zigzag-conversion/) | 🟡 中等 | 🟡 踩坑修正 | 轴对称镜像反射推导；折线拐点自对称跨越；周期步长计算 | [详尽复盘笔记](problems/01_Array_String/0006_zigzag-conversion/README.md) |
 
 ### 4. 矩阵 (Matrix)
 | 题号 | 题目名称 | 难度 | 掌握状态 | 核心考点 / 突破口 | 随笔链接 |
