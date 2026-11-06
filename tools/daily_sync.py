@@ -63,6 +63,7 @@ KNOWN_QUESTION_TOPIC = {
     "spiral-matrix": "04_Matrix",
     "merge-intervals": "06_Intervals",
     "insert-interval": "06_Intervals",
+    "minimum-number-of-arrows-to-burst-balloons": "06_Intervals",
     "evaluate-reverse-polish-notation": "07_Stack",
     "happy-number": "05_Hashmap",
     "sqrtx": "21_Math",
@@ -74,7 +75,9 @@ KNOWN_QUESTION_TOPIC = {
     "average-of-levels-in-binary-tree": "10_Binary_Tree_BFS",
     "minimum-absolute-difference-in-bst": "11_Binary_Search_Tree",
     "triangle": "16_Multidimensional_DP",
-    "maximum-subarray": "17_Kadane_Algorithm"
+    "maximum-subarray": "17_Kadane_Algorithm",
+    "3sum": "02_Two_Pointers",
+    "two-sum-ii-input-array-is-sorted": "02_Two_Pointers"
 }
 
 
@@ -1355,7 +1358,9 @@ def sync_submissions():
                 ("average-of-levels-in-binary-tree", "二叉树的层平均值"),
                 ("remove-duplicates-from-sorted-array-ii", "删除有序数组中的重复项 II"),
                 ("set-matrix-zeroes", "矩阵置零"),
-                ("rotate-image", "旋转图像")
+                ("rotate-image", "旋转图像"),
+                ("3sum", "三数之和"),
+                ("two-sum-ii-input-array-is-sorted", "两数之和 II")
             ]:
                 if kw in title:
                     slug = k_slug
