@@ -81,6 +81,7 @@ def ensure_waf_cookies(cookie_str: str) -> str:
 
 def get_submissions_list(slug: str, cookie: str):
     csrf = parse_csrf(cookie)
+    # 1. 优先尝试 REST 接口
     cmd = [
         "curl", "-s", f"https://leetcode.cn/api/submissions/{slug}/",
         "-H", f"Cookie: {cookie}",
@@ -91,10 +92,71 @@ def get_submissions_list(slug: str, cookie: str):
     res = subprocess.run(cmd, capture_output=True, text=True)
     try:
         data = json.loads(res.stdout)
-        return data.get("submissions_dump", [])
-    except Exception as e:
-        print(f"[!] 解析提交列表失败: {e}", file=sys.stderr)
-        return []
+        subs = data.get("submissions_dump", [])
+        if subs:
+            return subs
+    except Exception:
+        pass
+
+    # 2. 若 REST 接口无权限(403)或为空，使用 GraphQL submissionList 获取该题全部历史提交
+    query = """
+    query submissionList($offset: Int!, $limit: Int!, $lastKey: String, $questionSlug: String!) {
+      submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug) {
+        lastKey
+        hasNext
+        submissions {
+          id
+          statusDisplay
+          lang
+          runtime
+          timestamp
+          url
+          isPending
+          memory
+        }
+      }
+    }
+    """
+    all_subs = []
+    offset = 0
+    last_key = None
+    has_next = True
+    while has_next:
+        vars_payload = {"offset": offset, "limit": 20, "questionSlug": slug}
+        if last_key:
+            vars_payload["lastKey"] = last_key
+        cmd = [
+            "curl", "-s", "https://leetcode.cn/graphql/",
+            "-H", f"Cookie: {cookie}",
+            "-H", f"User-Agent: {USER_AGENT}",
+            "-H", "Content-Type: application/json",
+            "-H", f"x-csrftoken: {csrf}",
+            "-H", f"Referer: https://leetcode.cn/problems/{slug}/submissions/",
+            "--data", json.dumps({
+                "operationName": "submissionList",
+                "query": query,
+                "variables": vars_payload
+            })
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            data = json.loads(res.stdout)
+            sub_list_data = data.get("data", {}).get("submissionList", {})
+            subs = sub_list_data.get("submissions", [])
+            for s in subs:
+                s["id"] = int(s["id"]) if s.get("id") else 0
+                s["timestamp"] = int(s["timestamp"]) if s.get("timestamp") else None
+                s["status_display"] = s.get("statusDisplay") or s.get("status_display", "Unknown")
+                all_subs.append(s)
+            has_next = sub_list_data.get("hasNext", False)
+            last_key = sub_list_data.get("lastKey")
+            offset += len(subs)
+            if not subs:
+                break
+        except Exception:
+            break
+
+    return all_subs
 
 
 def get_submission_detail(sub_id: str, cookie: str):

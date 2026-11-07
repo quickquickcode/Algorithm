@@ -1312,28 +1312,98 @@ def sync_submissions():
     cookie = fetch_submissions.ensure_waf_cookies(raw_cookie)
     csrf = fetch_submissions.parse_csrf(cookie)
 
-    # 获取全局最近提交
-    cmd = [
-        "curl", "-s", "https://leetcode.cn/api/submissions/?offset=0&limit=50",
-        "-H", f"Cookie: {cookie}",
-        "-H", f"User-Agent: {fetch_submissions.USER_AGENT}",
-        "-H", f"x-csrftoken: {csrf}"
-    ]
-    res = subprocess.run(cmd, capture_output=True, text=True)
-    try:
-        data = json.loads(res.stdout)
-        subs = data.get("submissions_dump", [])
-    except Exception as e:
-        print(f"[!] 获取全局提交失败: {e}")
-        return
+    # 1. 获取全局最近提交 (REST 接口，单页 20 条，带 Referer 防护)
+    subs = []
+    offset = 0
+    last_key = None
+    has_next = True
+    while has_next and offset < 40:
+        url = f"https://leetcode.cn/api/submissions/?offset={offset}&limit=20"
+        if last_key:
+            url += f"&last_key={last_key}"
+        cmd = [
+            "curl", "-s", url,
+            "-H", f"Cookie: {cookie}",
+            "-H", f"User-Agent: {fetch_submissions.USER_AGENT}",
+            "-H", f"x-csrftoken: {csrf}",
+            "-H", "Referer: https://leetcode.cn/submissions/"
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            data = json.loads(res.stdout)
+            page_subs = data.get("submissions_dump", [])
+            subs.extend(page_subs)
+            has_next = data.get("has_next", False)
+            last_key = data.get("last_key")
+            offset += len(page_subs)
+            if not page_subs:
+                break
+        except Exception:
+            break
 
-    print(f"[+] 成功获取最近 {len(subs)} 条全局提交记录。")
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
-    # 按题目识别并去重需要同步的题目 slug 列表
-    # 动态通过 GraphQL 提交详情提取 question.titleSlug
+    # 2. 同时使用 GraphQL 获取用户最近 30 条提交（更稳健、含 titleSlug 直接映射）
     recent_slugs = set()
     title_to_slug = {}
+
+    try:
+        q_user = "query userStatus { userStatus { isSignedIn userSlug username } }"
+        cmd_u = [
+            "curl", "-s", "https://leetcode.cn/graphql/",
+            "-H", f"Cookie: {cookie}",
+            "-H", f"User-Agent: {fetch_submissions.USER_AGENT}",
+            "-H", "Content-Type: application/json",
+            "-H", f"x-csrftoken: {csrf}",
+            "--data", json.dumps({"query": q_user})
+        ]
+        res_u = subprocess.run(cmd_u, capture_output=True, text=True)
+        u_data = json.loads(res_u.stdout).get("data", {}).get("userStatus", {})
+        user_slug = u_data.get("userSlug")
+        if user_slug:
+            q_recent = """
+            query recentSubmissions($userSlug: String!) {
+              recentSubmissions(userSlug: $userSlug) {
+                status
+                lang
+                id
+                question {
+                  title
+                  titleSlug
+                  questionFrontendId
+                }
+                submitTime
+              }
+            }
+            """
+            cmd_r = [
+                "curl", "-s", "https://leetcode.cn/graphql/",
+                "-H", f"Cookie: {cookie}",
+                "-H", f"User-Agent: {fetch_submissions.USER_AGENT}",
+                "-H", "Content-Type: application/json",
+                "-H", f"x-csrftoken: {csrf}",
+                "--data", json.dumps({
+                    "operationName": "recentSubmissions",
+                    "query": q_recent,
+                    "variables": {"userSlug": user_slug}
+                })
+            ]
+            res_r = subprocess.run(cmd_r, capture_output=True, text=True)
+            g_subs = json.loads(res_r.stdout).get("data", {}).get("recentSubmissions", [])
+            for gs in g_subs:
+                g_q = gs.get("question", {})
+                g_slug = g_q.get("titleSlug")
+                g_title = g_q.get("title")
+                if g_slug:
+                    recent_slugs.add(g_slug)
+                if g_title and g_slug:
+                    title_to_slug[g_title] = g_slug
+    except Exception:
+        pass
+
+    total_fetched = len(subs) or len(recent_slugs)
+    print(f"[+] 成功获取最近全局提交记录 (识别到 {len(recent_slugs)} 道活跃题目)。")
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+    # 按题目识别并补充去重需要同步的题目 slug 列表
     for s in subs[:40]:
         title = s.get("title", "")
         if title in title_to_slug:
@@ -1360,7 +1430,9 @@ def sync_submissions():
                 ("set-matrix-zeroes", "矩阵置零"),
                 ("rotate-image", "旋转图像"),
                 ("3sum", "三数之和"),
-                ("two-sum-ii-input-array-is-sorted", "两数之和 II")
+                ("two-sum-ii-input-array-is-sorted", "两数之和 II"),
+                ("summary-ranges", "汇总区间"),
+                ("minimum-number-of-arrows-to-burst-balloons", "用最少数量的箭引爆气球")
             ]:
                 if kw in title:
                     slug = k_slug
@@ -1396,7 +1468,7 @@ def sync_submissions():
             continue
 
         # 按时间正序排列（最早 -> 最新）
-        chronological = list(reversed(q_subs))
+        chronological = sorted(q_subs, key=lambda s: int(s.get("timestamp") or 0))
         q_data = get_question_data(slug, cookie)
         target_dir = resolve_problem_dir(repo_root, slug, q_data)
         history_dir = os.path.join(target_dir, "history")
@@ -1417,7 +1489,7 @@ def sync_submissions():
 
         for idx, sub in enumerate(chronological, 1):
             sub_id = str(sub["id"])
-            status = sub.get("status_display", "Unknown")
+            status = sub.get("status_display") or sub.get("statusDisplay", "Unknown")
             status_clean = status.replace(" ", "_")
             fname = f"{idx:02d}_{sub_id}_{status_clean}.cpp"
             fpath = os.path.join(history_dir, fname)
