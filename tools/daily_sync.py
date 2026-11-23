@@ -1176,10 +1176,20 @@ def update_dashboard(repo_root: str):
         content
     )
 
+    # 更新 121 题表格行
+    old_121 = r"\| 121 \| \[买卖股票的最佳时机\].*?\| 待添加 \|"
+    new_121 = r"| 121 | [买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) | 🟢 简单 | 🟡 踩坑修正 | 动态维护前缀最低成本买入价；一次遍历贪心计算最大利润 | [详尽复盘笔记](problems/01_Array_String/0121_best-time-to-buy-and-sell-stock/README.md) |"
+    content = re.sub(old_121, new_121, content)
+
     # 更新 122 题表格行
     old_122 = r"\| 122 \| \[买卖股票的最佳时机 II\].*?\| 待添加 \|"
     new_122 = r"| 122 | [买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/) | 🟡 中等 | 🟢 一次通过 | 贪心收集正收益；波谷波峰转化；相邻差值累加；0ms 双百 | [详尽复盘笔记](problems/01_Array_String/0122_best-time-to-buy-and-sell-stock-ii/README.md) |"
     content = re.sub(old_122, new_122, content)
+
+    # 更新 55 题表格行
+    old_55 = r"\| 55 \| \[跳跃游戏\].*?\| 待添加 \|"
+    new_55 = r"| 55 | [跳跃游戏](https://leetcode.cn/problems/jump-game/) | 🟡 中等 | 🟡 踩坑修正 | 逆向原地 DP；嵌套循环自增笔误；步长自身检测修复；贪心最远边界优化 | [详尽复盘笔记](problems/01_Array_String/0055_jump-game/README.md) |"
+    content = re.sub(old_55, new_55, content)
 
     # 更新 45 题表格行
     old_45 = r"\| 45 \| \[跳跃游戏 II\].*?\| 待添加 \|"
